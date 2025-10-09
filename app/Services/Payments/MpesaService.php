@@ -27,13 +27,47 @@ class MpesaService
         $this->shortcode = config('mpesa.shortcode');
         $this->passkey = config('mpesa.passkey');
         $this->callbackUrl = config('mpesa.callback_url');
+        $this->assertConfig();
+    }
+
+    private function assertConfig(): void
+    {
+        $missing = [];
+        if (empty($this->baseUrl)) $missing[] = 'MPESA_API_BASE_URL';
+        if (empty($this->consumerKey)) $missing[] = 'MPESA_CONSUMER_KEY';
+        if (empty($this->consumerSecret)) $missing[] = 'MPESA_CONSUMER_SECRET';
+        if (empty($this->shortcode)) $missing[] = 'MPESA_SHORTCODE';
+        if (empty($this->passkey)) $missing[] = 'MPESA_PASSKEY';
+        if (empty($this->callbackUrl)) $missing[] = 'MPESA_CALLBACK_URL';
+        if (!empty($missing)) {
+            Log::error('Mpesa configuration missing required keys', [ 'missing' => $missing ]);
+            throw new \RuntimeException('Missing required M-Pesa configuration: ' . implode(', ', $missing));
+        }
     }
     private function generateAccessToken()
     {
         $response = Http::withBasicAuth($this->consumerKey, $this->consumerSecret)
+            ->acceptJson()
             ->get($this->baseUrl . '/oauth/v1/generate?grant_type=client_credentials');
-        
-        return $response->json()['access_token'];
+
+        if (! $response->successful()) {
+            Log::error('Mpesa OAuth token request failed', [
+                'status' => $response->status(),
+                'body' => $response->body(),
+            ]);
+            throw new \RuntimeException('Failed to generate M-Pesa access token: HTTP ' . $response->status());
+        }
+
+        $data = $response->json();
+        if (!is_array($data) || empty($data['access_token'])) {
+            Log::error('Mpesa OAuth token response missing access_token', [
+                'response' => $data,
+                'body' => $response->body(),
+            ]);
+            throw new \RuntimeException('M-Pesa token response missing access_token');
+        }
+
+        return $data['access_token'];
     }
 
     public function initiate(array $data)
@@ -58,7 +92,22 @@ class MpesaService
         ];
 
         $response = Http::withToken($token)
-            ->post($this->baseUrl . '/stkpush/v1/processrequest', $payload);
+            ->acceptJson()
+            ->post($this->baseUrl . '/mpesa/stkpush/v1/processrequest', $payload);
+
+        if (! $response->successful()) {
+            Log::error('Mpesa STK push request failed', [
+                'status' => $response->status(),
+                'body' => $response->body(),
+                'payload' => $payload,
+            ]);
+            return [
+                'error' => true,
+                'status' => $response->status(),
+                'message' => 'STK push request failed',
+                'body' => json_decode($response->body(), true) ?? $response->body(),
+            ];
+        }
 
         return $response->json();
     }
