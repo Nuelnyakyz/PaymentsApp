@@ -125,6 +125,11 @@ class MpesaService
         $amount = collect($metadata)->firstWhere('Name', 'Amount')['Value'] ?? 0;
         $mpesaReceipt = collect($metadata)->firstWhere('Name', 'MpesaReceiptNumber')['Value'] ?? null;
         $phone = collect($metadata)->firstWhere('Name', 'PhoneNumber')['Value'] ?? null;
+        // Attempt to assemble payer name if provided (rare for STK callback)
+        $firstName = collect($metadata)->firstWhere('Name', 'FirstName')['Value'] ?? null;
+        $middleName = collect($metadata)->firstWhere('Name', 'MiddleName')['Value'] ?? null;
+        $lastName = collect($metadata)->firstWhere('Name', 'LastName')['Value'] ?? null;
+        $composedName = trim(implode(' ', array_filter([$firstName, $middleName, $lastName])));
 
         // Find the transaction
         $transaction = Transaction::where('checkout_request_id', $checkoutId)->first();
@@ -144,11 +149,16 @@ class MpesaService
                 'raw_response' => $callbackData,
             ]);
 
-            // Update payment   
+            // Update payment (ensure payer phone/name captured from callback where available)
             $payment->update([
                 'status' => 'success',
                 'paid_at' => now(),
+                'payer_phone' => $phone ?? $payment->payer_phone,
+                'payer_name' => $composedName ?: ($payment->payer_name ?? $payment->student_full_name),
             ]);
+
+            // Refresh payment so downstream services see updated payer details
+            $payment->refresh();
 
             // Generate receipt
             $receiptService = new ReceiptService();
@@ -161,7 +171,12 @@ class MpesaService
                 'raw_response' => $callbackData,
             ]);
 
-            $payment->update(['status' => 'failed']);
+            // Capture payer phone/name even on failure if present for audit
+            $payment->update([
+                'status' => 'failed',
+                'payer_phone' => $phone ?? $payment->payer_phone,
+                'payer_name' => $composedName ?: $payment->payer_name,
+            ]);
 
             Log::info("Payment failed: {$resultDesc}");
         }
