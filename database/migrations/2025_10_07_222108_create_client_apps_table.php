@@ -13,8 +13,13 @@ return new class extends Migration
     {
         Schema::create('client_apps', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->string('api_key')->unique();
+            $table->string('api_secret');
+            $table->string('callback_url')->nullable(); // where to redirect after payment
             $table->timestamps();
         });
+        
     }
 
     /**

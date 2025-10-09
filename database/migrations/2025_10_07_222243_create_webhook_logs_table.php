@@ -13,8 +13,11 @@ return new class extends Migration
     {
         Schema::create('webhook_logs', function (Blueprint $table) {
             $table->id();
+            $table->string('provider')->nullable(); // mpesa, airtel, etc.
+            $table->json('payload');
             $table->timestamps();
         });
+        
     }
 
     /**

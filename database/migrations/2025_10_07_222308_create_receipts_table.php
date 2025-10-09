@@ -13,8 +13,21 @@ return new class extends Migration
     {
         Schema::create('receipts', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('payment_id')->constrained()->onDelete('cascade');
+            $table->string('receipt_number')->unique();
+        
+            // Student + payer info
+            $table->string('student_full_name')->nullable();
+            $table->string('payer_name')->nullable();
+            $table->string('payer_phone')->nullable();
+        
+            $table->decimal('amount', 10, 2);
+            $table->string('course_name')->nullable();
+        
+            $table->timestamp('issued_at');
             $table->timestamps();
         });
+        
     }
 
     /**

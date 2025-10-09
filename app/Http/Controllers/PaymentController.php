@@ -3,24 +3,67 @@
 namespace App\Http\Controllers;
 
 use App\Services\Payments\MpesaService;
-use App\Services\Payments\AirtelService;
-use App\Services\Payments\CardService;
-use App\Services\Payments\EcitizenService;
-
+use App\Models\Payment;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 
 class PaymentController extends Controller
 {
     public function initiate(Request $request)
     {
-        $method = $request->get('method'); // e.g. mpesa, airtel, card
+        $validated = $request->validate([
+            'payment_method' => 'required|string',
+            'phone' => 'required|string',
+            'amount' => 'required|numeric',
+            'reference' => 'required|string|unique:payments,reference',
+            'student_full_name' => 'required|string',
+            'student_email' => 'nullable|email',
+            'student_phone' => 'nullable|string',
+            'payer_name' => 'nullable|string',
+            'payer_phone' => 'nullable|string',
+            'course_name' => 'nullable|string',
+            'client_app_id' => 'nullable|exists:client_apps,id',
+        ]);
+
+        $method = $validated['payment_method'];
         $service = $this->getPaymentService($method);
 
-        $result = $service->initiate($request->all());
+        // 1️⃣ Create payment record
+        $payment = Payment::create([
+            'client_app_id' => $validated['client_app_id'] ?? null,
+            'reference' => $validated['reference'],
+            'student_full_name' => $validated['student_full_name'],
+            'student_email' => $validated['student_email'] ?? null,
+            'student_phone' => $validated['student_phone'] ?? $validated['phone'],
+            'payer_name' => $validated['payer_name'] ?? $validated['student_full_name'],
+            'payer_phone' => $validated['payer_phone'] ?? $validated['phone'],
+            'course_name' => $validated['course_name'] ?? null,
+            'amount' => $validated['amount'],
+            'status' => 'pending',
+            'payment_method' => $method,
+        ]);
 
-        return response()->json($result);
+        // 2️⃣ Initiate transaction
+        $result = $service->initiate($validated);
+
+        // 3️⃣ Log transaction
+        Transaction::create([
+            'payment_id' => $payment->id,
+            'checkout_request_id' => $result['CheckoutRequestID'] ?? null,
+            'merchant_request_id' => $result['MerchantRequestID'] ?? null,
+            'amount' => $validated['amount'],
+            'phone' => $validated['phone'],
+            'status' => 'initiated',
+            'raw_response' => $result,
+        ]);
+
+        return response()->json([
+            'message' => 'Payment initiated',
+            'payment_id' => $payment->id,
+            'response' => $result,
+        ]);
     }
-
+    
     private function getPaymentService($method)
     {
         return match ($method) {

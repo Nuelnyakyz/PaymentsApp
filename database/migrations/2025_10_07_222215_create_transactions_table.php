@@ -13,8 +13,17 @@ return new class extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('payment_id')->constrained()->onDelete('cascade');
+            $table->string('transaction_id')->nullable(); // e.g. M-Pesa receipt number
+            $table->string('merchant_request_id')->nullable();
+            $table->string('checkout_request_id')->nullable();
+            $table->decimal('amount', 10, 2)->nullable();
+            $table->string('phone')->nullable();
+            $table->string('status')->default('initiated'); // initiated, processing, success, failed
+            $table->json('raw_response')->nullable(); // full API JSON for debugging
             $table->timestamps();
         });
+        
     }
 
     /**
