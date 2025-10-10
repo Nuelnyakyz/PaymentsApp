@@ -117,6 +117,11 @@ class MpesaService
         // Parse callback and update payment status in DB
         Log::info('M-Pesa Callback received', $callbackData);
 
+        // TEMP: print full callback payload to terminal/error log without affecting flow
+        // This will appear in the terminal when using `php artisan serve` or in the web server error log
+        // Remove once you've verified the incoming data
+        error_log('MPESA CALLBACK PAYLOAD: ' . json_encode($callbackData));
+
         $resultCode = $callbackData['Body']['stkCallback']['ResultCode'];
         $resultDesc = $callbackData['Body']['stkCallback']['ResultDesc'];
         $checkoutId = $callbackData['Body']['stkCallback']['CheckoutRequestID'];
