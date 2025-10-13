@@ -7,6 +7,7 @@ use App\Models\Payment;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class PaymentController extends Controller
 {
@@ -94,14 +95,18 @@ class PaymentController extends Controller
 
         // Try a few times to avoid collision with DB unique constraint
         for ($i = 0; $i < 5; $i++) {
-            $suffix = strtoupper(date('Ymd') . '-' . Str::random(6));
+            // Example: 20251013 074530123 becomes 20251013074530123 (YmdHisv)
+            $timeMs = Carbon::now()->format('YmdHisv');
+            $suffix = $timeMs . '-' . Str::upper(Str::random(4));
             $ref = $prefix . '-' . $suffix;
             if (!Payment::where('reference', $ref)->exists()) {
                 return $ref;
             }
+            usleep(1000); // wait 1ms before retry to avoid duplicate ms timestamp
         }
 
-        // Final fallback with uniqid
-        return $prefix . '-' . strtoupper(date('Ymd') . '-' . Str::random(8));
+        // Final fallback with longer random segment
+        $timeMs = Carbon::now()->format('YmdHisv');
+        return $prefix . '-' . $timeMs . '-' . Str::upper(Str::random(8));
     }
 }
