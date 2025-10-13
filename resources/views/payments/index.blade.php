@@ -53,7 +53,7 @@
                         </div>
                         <div class="field">
                             <label>Reference</label>
-                            <input name="reference" type="text" placeholder="INV-2025-0001" required>
+                            <input name="reference" type="text" placeholder="Auto-generated" readonly>
                         </div>
                         <div class="field">
                             <label>Student Full Name</label>
@@ -92,7 +92,7 @@
                         </div>
                         <div class="field">
                             <label>Reference</label>
-                            <input name="reference" type="text" placeholder="INV-2025-0002" required>
+                            <input name="reference" type="text" placeholder="Auto-generated" readonly>
                         </div>
                         <div class="field">
                             <label>Student Full Name</label>
@@ -132,7 +132,7 @@
                         </div>
                         <div class="field">
                             <label>Reference</label>
-                            <input name="reference" type="text" placeholder="ECZ-REF-001" required>
+                            <input name="reference" type="text" placeholder="Auto-generated" readonly>
                         </div>
                         <div class="field">
                             <label>Student Full Name</label>
@@ -173,7 +173,7 @@
                         </div>
                         <div class="field">
                             <label>Reference</label>
-                            <input name="reference" type="text" placeholder="CARD-REF-001" required>
+                            <input name="reference" type="text" placeholder="Auto-generated" readonly>
                         </div>
                         <div class="field">
                             <label>Student Full Name</label>
