@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 
-class PaymentController extends Controller
+class MakePaymentController extends Controller
 {
     public function initiate(Request $request)
     {

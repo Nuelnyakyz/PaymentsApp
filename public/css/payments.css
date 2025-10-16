@@ -11,7 +11,7 @@
 * { box-sizing: border-box; }
 body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji"; margin: 0; background: var(--bg); color: #111827; }
 .container { max-width: 920px; margin: 32px auto; padding: 0 16px; }
-.heading { margin: 8px 0 24px; font-size: 28px; font-weight: 700; color: #ff7f50}
+.heading { margin: 8px 0 24px; font-size: 28px; font-weight: 700; color: #ff7f50; }
 .sub { color: var(--muted); margin-bottom: 24px; }
 .grid { display: grid; gap: 16px; }
 .service { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; min-height: 112px; }

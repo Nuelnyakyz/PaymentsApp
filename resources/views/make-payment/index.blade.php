@@ -38,7 +38,7 @@
                 <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
             </div>
             <div class="form-wrap">
-                <form method="POST" action="{{ route('payments.initiate') }}">
+                <form method="POST" action="{{ route('pay.initiate') }}">
                     @csrf
                     <input type="hidden" name="payment_method" value="mpesa">
                     <div class="row">
@@ -78,7 +78,7 @@
                 <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
             </div>
             <div class="form-wrap">
-                <form method="POST" action="{{ route('payments.initiate') }}">
+                <form method="POST" action="{{ route('pay.initiate') }}">
                     @csrf
                     <input type="hidden" name="payment_method" value="airtel">
                     <div class="row">
@@ -118,7 +118,7 @@
                 <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
             </div>
             <div class="form-wrap">
-                <form method="POST" action="{{ route('payments.initiate') }}">
+                <form method="POST" action="{{ route('pay.initiate') }}">
                     @csrf
                     <input type="hidden" name="payment_method" value="ecitizen">
                     <div class="row">
@@ -158,7 +158,7 @@
                 <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
             </div>
             <div class="form-wrap">
-                <form method="POST" action="{{ route('payments.initiate') }}">
+                <form method="POST" action="{{ route('pay.initiate') }}">
                     @csrf
                     <input type="hidden" name="payment_method" value="card">
                     <div class="row">
