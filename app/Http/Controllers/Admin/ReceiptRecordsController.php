@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Receipt;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ReceiptRecordsController extends Controller
 {
@@ -34,5 +35,22 @@ class ReceiptRecordsController extends Controller
         return view('admin.receipts.index', [
             'receipts' => $receipts,
         ]);
+    }
+
+    public function show(Receipt $receipt)
+    {
+        $receipt->load('payment');
+        return view('admin.receipts.show', [
+            'receipt' => $receipt,
+        ]);
+    }
+
+    public function pdf(Receipt $receipt)
+    {
+        $receipt->load('payment');
+        $pdf = Pdf::loadView('admin.receipts.pdf', [
+            'receipt' => $receipt,
+        ])->setPaper('a4');
+        return $pdf->download('receipt-'.$receipt->receipt_number.'.pdf');
     }
 }

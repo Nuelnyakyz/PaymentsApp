@@ -31,7 +31,7 @@
             <tbody>
                 @forelse ($receipts as $r)
                     <tr class="border-b">
-                        <td class="py-2 pr-4">{{ $r->receipt_number }}</td>
+                        <td class="py-2 pr-4"><a href="{{ route('admin.receipts.show', $r) }}" class="text-blue-600 hover:underline">{{ $r->receipt_number }}</a></td>
                         <td class="py-2 pr-4">{{ $r->student_full_name }}</td>
                         <td class="py-2 pr-4">{{ $r->payer_name }} ({{ $r->payer_phone }})</td>
                         <td class="py-2 pr-4">{{ number_format($r->amount, 2) }}</td>

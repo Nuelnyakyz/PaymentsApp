@@ -22,6 +22,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/payments', [AdminPaymentRecordsController::class, 'index'])->name('payments.index');
     Route::get('/transactions', [AdminTransactionRecordsController::class, 'index'])->name('transactions.index');
     Route::get('/receipts', [AdminReceiptRecordsController::class, 'index'])->name('receipts.index');
+    Route::get('/receipts/{receipt}', [AdminReceiptRecordsController::class, 'show'])->name('receipts.show');
+    Route::get('/receipts/{receipt}/pdf', [AdminReceiptRecordsController::class, 'pdf'])->name('receipts.pdf');
 });
 
 Route::middleware('auth')->group(function () {
