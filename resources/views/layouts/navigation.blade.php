@@ -22,9 +22,6 @@
                             <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
                                 {{ __('nav.admin_dashboard') }}
                             </x-nav-link>
-                            <x-nav-link :href="route('admin.payments.index')" :active="request()->routeIs('admin.payments.index')">
-                                {{ __('nav.payments') }}
-                            </x-nav-link>
                             <x-nav-link :href="route('admin.transactions.index')" :active="request()->routeIs('admin.transactions.index')">
                                 {{ __('nav.transactions') }}
                             </x-nav-link>
@@ -91,9 +88,6 @@
                 @if (Auth::user()->is_admin)
                     <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
                         {{ __('nav.admin_dashboard') }}
-                    </x-responsive-nav-link>
-                    <x-responsive-nav-link :href="route('admin.payments.index')" :active="request()->routeIs('admin.payments.index')">
-                        {{ __('nav.payments') }}
                     </x-responsive-nav-link>
                     <x-responsive-nav-link :href="route('admin.transactions.index')" :active="request()->routeIs('admin.transactions.index')">
                         {{ __('nav.transactions') }}

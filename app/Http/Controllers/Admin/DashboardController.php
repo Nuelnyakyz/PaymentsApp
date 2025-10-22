@@ -21,7 +21,7 @@ class DashboardController extends Controller
             ->whereDate('updated_at', $today)
             ->sum('amount');
 
-        $recentPayments = Payment::latest('created_at')->limit(10)->get();
+        $recentPayments = Payment::latest('created_at')->paginate(20);
 
         return view('admin.dashboard', [
             'paymentsToday' => $paymentsToday,

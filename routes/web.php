@@ -3,7 +3,6 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MakePaymentController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
-use App\Http\Controllers\Admin\PaymentRecordsController as AdminPaymentRecordsController;
 use App\Http\Controllers\Admin\TransactionRecordsController as AdminTransactionRecordsController;
 use App\Http\Controllers\Admin\ReceiptRecordsController as AdminReceiptRecordsController;
 use Illuminate\Support\Facades\Route;
@@ -19,7 +18,6 @@ Route::get('/', function () {
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard', [AdminDashboardController::class, 'index']);
-    Route::get('/payments', [AdminPaymentRecordsController::class, 'index'])->name('payments.index');
     Route::get('/transactions', [AdminTransactionRecordsController::class, 'index'])->name('transactions.index');
     Route::get('/receipts', [AdminReceiptRecordsController::class, 'index'])->name('receipts.index');
     Route::get('/receipts/{receipt}', [AdminReceiptRecordsController::class, 'show'])->name('receipts.show');

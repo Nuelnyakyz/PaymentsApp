@@ -22,7 +22,7 @@
 
     <div class="bg-white shadow rounded">
         <div class="p-6 border-b">
-            <h2 class="text-xl font-semibold text-secondary">Recent Payments</h2>
+            <h2 class="text-xl font-semibold text-secondary">{{ $recentPayments->currentPage() === 1 ? 'Recent Payments' : 'Payments' }}</h2>
         </div>
         <div class="p-6 overflow-x-auto">
             <table class="min-w-full text-sm">
@@ -57,6 +57,9 @@
                     @endforelse
                 </tbody>
             </table>
+        </div>
+        <div class="p-6 border-t">
+            {{ $recentPayments->links() }}
         </div>
     </div>
     </div>
