@@ -14,9 +14,7 @@ class ClientApp extends Model
         'name', 'api_key', 'api_secret', 'callback_url',
     ];
 
-    protected $casts = [
-        'callback_url' => 'url',
-    ];
+    // no special casts required; validate URL in controllers
 
     public function payments()
     {

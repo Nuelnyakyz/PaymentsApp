@@ -77,15 +77,16 @@ class MpesaService
         $timestamp = now()->format('YmdHis');
         $password = base64_encode($this->shortcode . $this->passkey . $timestamp);
 
+        $phone = $data['payer_phone'] ?? $data['phone'] ?? null;
         $payload = [
             'BusinessShortCode' => $this->shortcode,
             'Password' => $password,
             'Timestamp' => $timestamp,
             'TransactionType' => 'CustomerPayBillOnline',
             'Amount' => $data['amount'],
-            'PartyA' => $data['phone'],
+            'PartyA' => $phone,
             'PartyB' => $this->shortcode,
-            'PhoneNumber' => $data['phone'],
+            'PhoneNumber' => $phone,
             'CallBackURL' => $this->callbackUrl,
             'AccountReference' => $data['reference'],
             'TransactionDesc' => 'Course Payment',

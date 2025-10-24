@@ -44,7 +44,7 @@
                 <div class="space-y-1">
                     <div class="text-gray-500 text-sm">Phone/Card</div>
                     @php
-                        $phone = $receipt->payer_phone ?: optional($receipt->payment)->student_phone;
+                        $phone = $receipt->payer_phone;
                         $masked = $phone ? (strlen($phone) > 4 ? str_repeat('*', max(strlen($phone)-4, 0)) . substr($phone, -4) : $phone) : '-';
                     @endphp
                     <div class="font-medium">{{ $masked }}</div>

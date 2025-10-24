@@ -13,7 +13,7 @@ class Payment extends Model
     protected $fillable = [
         'client_app_id',
         'reference',
-        'student_full_name', 'student_email', 'student_phone',
+        'student_full_name', 'student_email',
         'payer_name', 'payer_phone',
         'course_name', 'amount', 'status', 'payment_method', 'paid_at'
     ];

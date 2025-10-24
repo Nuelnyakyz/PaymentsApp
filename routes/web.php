@@ -5,6 +5,7 @@ use App\Http\Controllers\MakePaymentController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\TransactionRecordsController as AdminTransactionRecordsController;
 use App\Http\Controllers\Admin\ReceiptRecordsController as AdminReceiptRecordsController;
+use App\Http\Controllers\ClientAppController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -22,6 +23,11 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/receipts', [AdminReceiptRecordsController::class, 'index'])->name('receipts.index');
     Route::get('/receipts/{receipt}', [AdminReceiptRecordsController::class, 'show'])->name('receipts.show');
     Route::get('/receipts/{receipt}/pdf', [AdminReceiptRecordsController::class, 'pdf'])->name('receipts.pdf');
+
+    Route::get('/client-apps', [ClientAppController::class, 'index'])->name('client-apps.index');
+    Route::post('/client-apps', [ClientAppController::class, 'store'])->name('client-apps.store');
+    Route::patch('/client-apps/{clientApp}', [ClientAppController::class, 'update'])->name('client-apps.update');
+    Route::delete('/client-apps/{clientApp}', [ClientAppController::class, 'destroy'])->name('client-apps.destroy');
 });
 
 Route::middleware('auth')->group(function () {

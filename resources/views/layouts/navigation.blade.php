@@ -28,6 +28,9 @@
                             <x-nav-link :href="route('admin.receipts.index')" :active="request()->routeIs('admin.receipts.index')">
                                 {{ __('nav.receipts') }}
                             </x-nav-link>
+                            <x-nav-link :href="route('admin.client-apps.index')" :active="request()->routeIs('admin.client-apps.*')">
+                                Client Apps
+                            </x-nav-link>
                         @endif
                     @endauth
                     <x-nav-link :href="route('pay.index')" :active="request()->routeIs('pay.index')">{{ __('nav.pay') }}</x-nav-link>
@@ -94,6 +97,9 @@
                     </x-responsive-nav-link>
                     <x-responsive-nav-link :href="route('admin.receipts.index')" :active="request()->routeIs('admin.receipts.index')">
                         {{ __('nav.receipts') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('admin.client-apps.index')" :active="request()->routeIs('admin.client-apps.*')">
+                        Client Apps
                     </x-responsive-nav-link>
                 @endif
             @endauth

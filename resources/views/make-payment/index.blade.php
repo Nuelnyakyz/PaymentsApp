@@ -59,6 +59,14 @@
                             <label>Student Full Name</label>
                             <input name="student_full_name" type="text" placeholder="John Doe" required>
                         </div>
+                        <div class="field">
+                            <label>Student Email</label>
+                            <input name="student_email" type="email" placeholder="john.doe@example.com">
+                        </div>
+                        <div class="field">
+                            <label>Course</label>
+                            <input name="course_name" type="text" placeholder="e.g. BSc Computer Science">
+                        </div>
                     </div>
                     <div class="actions">
                         <button class="btn primary" type="submit">Pay with M-Pesa</button>
@@ -97,6 +105,14 @@
                         <div class="field">
                             <label>Student Full Name</label>
                             <input name="student_full_name" type="text" placeholder="John Doe" required>
+                        </div>
+                        <div class="field">
+                            <label>Student Email</label>
+                            <input name="student_email" type="email" placeholder="john.doe@example.com">
+                        </div>
+                        <div class="field">
+                            <label>Course</label>
+                            <input name="course_name" type="text" placeholder="e.g. BSc Computer Science">
                         </div>
                     </div>
                     <div class="actions">
@@ -138,6 +154,14 @@
                             <label>Student Full Name</label>
                             <input name="student_full_name" type="text" placeholder="John Doe" required>
                         </div>
+                        <div class="field">
+                            <label>Student Email</label>
+                            <input name="student_email" type="email" placeholder="john.doe@example.com">
+                        </div>
+                        <div class="field">
+                            <label>Course</label>
+                            <input name="course_name" type="text" placeholder="e.g. BSc Computer Science">
+                        </div>
                     </div>
                     <div class="actions">
                         <button class="btn primary" type="submit">Pay via eCitizen</button>
@@ -178,6 +202,14 @@
                         <div class="field">
                             <label>Student Full Name</label>
                             <input name="student_full_name" type="text" placeholder="John Doe" required>
+                        </div>
+                        <div class="field">
+                            <label>Student Email</label>
+                            <input name="student_email" type="email" placeholder="john.doe@example.com">
+                        </div>
+                        <div class="field">
+                            <label>Course</label>
+                            <input name="course_name" type="text" placeholder="e.g. BSc Computer Science">
                         </div>
                         <div class="field">
                             <label>Card Number</label>

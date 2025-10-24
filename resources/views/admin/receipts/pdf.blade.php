@@ -67,7 +67,7 @@
             <div class="col">
                 <div class="label">Phone/Card</div>
                 <?php
-                    $phone = $receipt->payer_phone ?: optional($receipt->payment)->student_phone;
+                    $phone = $receipt->payer_phone;
                     $masked = $phone ? (strlen($phone) > 4 ? str_repeat('*', max(strlen($phone)-4, 0)) . substr($phone, -4) : $phone) : '-';
                 ?>
                 <div class="value">{{ $masked }}</div>
