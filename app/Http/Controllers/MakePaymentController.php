@@ -8,6 +8,9 @@ use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+use App\Models\ClientApp;
 
 class MakePaymentController extends Controller
 {
@@ -68,10 +71,7 @@ class MakePaymentController extends Controller
             'raw_response' => $result,
         ]);
 
-        // 4️⃣ Cleanup session prefill on successful initiation
-        if (!($result['error'] ?? false)) {
-            $request->session()->forget('pay.prefill');
-        }
+        // 4️⃣ Do not clear session prefill here; we need return_url/user context for completion
 
         return response()->json([
             'message' => 'Payment initiated',
@@ -79,7 +79,81 @@ class MakePaymentController extends Controller
             'response' => $result,
         ]);
     }
-    
+
+    public function status(Request $request, Payment $payment)
+    {
+        $prefill = $request->session()->get('pay.prefill', []);
+        return response()->json([
+            'status' => $payment->status,
+            'payment_id' => $payment->id,
+            'return_url' => $prefill['return_url'] ?? null,
+        ]);
+    }
+
+    public function complete(Request $request, Payment $payment)
+    {
+        if (strtolower($payment->status) !== 'success') {
+            return redirect()->route('pay.index')->with('status', 'Payment not completed yet.');
+        }
+
+        $prefill = $request->session()->get('pay.prefill', []);
+
+        $client = $payment->clientApp;
+        $callbackUrl = $client?->callback_url;
+
+        $payload = [
+            'reference' => (string)$payment->reference,
+            'status' => (string)$payment->status,
+            'amount' => (float)$payment->amount,
+            'client_app_id' => $client?->id ? (string)$client->id : null,
+            'course_id' => $prefill['course_id'] ?? null,
+            'user_id' => $prefill['user_id'] ?? null,
+            'ts' => time(),
+        ];
+
+        // Sign payload if api_secret is available
+        $signature = null;
+        if (!empty($client?->api_secret)) {
+            $verify = $payload;
+            ksort($verify);
+            $base = http_build_query($verify, '', '&', PHP_QUERY_RFC3986);
+            $signature = hash_hmac('sha256', $base, $client->api_secret);
+            $payload['signature'] = $signature;
+        }
+
+        // Post to client callback if configured
+        if (!empty($callbackUrl)) {
+            try {
+                $resp = Http::asForm()->post($callbackUrl, $payload);
+                Log::info('Posted payment completion to client callback', [
+                    'url' => $callbackUrl,
+                    'status' => $resp->status(),
+                ]);
+            } catch (\Throwable $e) {
+                Log::error('Failed posting to client callback', [
+                    'url' => $callbackUrl,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
+
+        // Redirect user to return_url if present
+        $returnUrl = $prefill['return_url'] ?? null;
+
+        // Clear session prefill now that flow is complete
+        try {
+            $request->session()->forget('pay.prefill');
+        } catch (\Throwable $e) {
+            // ignore
+        }
+
+        if (!empty($returnUrl)) {
+            return redirect()->away($returnUrl);
+        }
+
+        return redirect()->route('pay.index')->with('status', 'Payment complete');
+    }
+
     private function getPaymentService($method)
     {
         return match ($method) {

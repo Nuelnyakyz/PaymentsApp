@@ -50,4 +50,10 @@ Route::get('/pay', function () {
 Route::post('/pay/initiate', [MakePaymentController::class, 'initiate'])
     ->name('pay.initiate');
 
+Route::get('/pay/status/{payment}', [MakePaymentController::class, 'status'])
+    ->name('pay.status');
+
+Route::get('/pay/complete/{payment}', [MakePaymentController::class, 'complete'])
+    ->name('pay.complete');
+
 require __DIR__.'/auth.php';

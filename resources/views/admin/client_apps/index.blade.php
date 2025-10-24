@@ -107,7 +107,7 @@
                                     <form method="POST" action="{{ route('admin.client-apps.destroy', $app) }}">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded hover:opacity-90">Yes, Delete</button>
+                                        <button type="submit" class="px-4 py-2 bg-red text-white rounded hover:opacity-90">Yes, Delete</button>
                                     </form>
                                 </div>
                             </div>
