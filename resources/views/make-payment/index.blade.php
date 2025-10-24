@@ -5,10 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payments</title>
     <link rel="stylesheet" href="{{ asset('css/payments.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     </head>
     <body>
+    <div class="top-bar" style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: #fff; border-bottom: 1px solid #e5e7eb;">
+        <div class="logo" style="font-weight: 600; font-size: 18px;">
+            <img src="{{ asset('logo.png') }}" alt="Logo" style="height: 30px; width: auto;">
+        </div>
+        <button onclick="window.history.back()" style="background: #ef4444; border: none; color: white; font-weight: 500; cursor: pointer; font-size: 14px; display: flex; align-items: center; gap: 5px; padding: 8px 16px; border-radius: 6px; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#dc2626'" onmouseout="this.style.backgroundColor='#ef4444'">
+            <i class="bi bi-x-lg"></i>
+            <span>Cancel</span>
+        </button>
+    </div>
     <div class="container">
-    <div class="heading">Make a Payment</div>
+    <div class="heading">Checkout</div>
     <div class="sub">Choose a payment method below.</div>
 
     <!-- Flash / Errors -->
