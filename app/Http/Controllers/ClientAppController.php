@@ -53,5 +53,24 @@ class ClientAppController extends Controller
         $clientApp->delete();
         return redirect()->route('admin.client-apps.index')->with('status', 'Client app deleted');
     }
+
+    public function regenerate(Request $request, ClientApp $clientApp)
+    {
+        // Regenerate cryptographically strong API credentials
+        do {
+            $apiKey = 'cli_' . Str::upper(Str::random(24));
+        } while (ClientApp::where('api_key', $apiKey)->exists());
+
+        $apiSecret = bin2hex(random_bytes(32));
+
+        $clientApp->update([
+            'api_key' => $apiKey,
+            'api_secret' => $apiSecret,
+        ]);
+
+        return redirect()
+            ->route('admin.client-apps.index')
+            ->with('status', 'API credentials regenerated. Update any systems using the old keys.');
+    }
 }
 

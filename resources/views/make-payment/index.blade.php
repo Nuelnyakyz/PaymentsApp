@@ -40,7 +40,11 @@
             <div class="form-wrap">
                 <form method="POST" action="{{ route('pay.initiate') }}">
                     @csrf
+                    @php($prefill = session('pay.prefill', []))
                     <input type="hidden" name="payment_method" value="mpesa">
+                    @if(!empty($prefill['client_app_id'] ?? null))
+                        <input type="hidden" name="client_app_id" value="{{ $prefill['client_app_id'] }}">
+                    @endif
                     <div class="row">
                         <div class="field">
                             <label>Phone (M-Pesa)</label>
@@ -49,7 +53,7 @@
                         </div>
                         <div class="field">
                             <label>Amount</label>
-                            <input name="amount" type="number" min="1" step="0.01" placeholder="1000" required>
+                            <input name="amount" type="number" min="1" step="0.01" placeholder="1000" required value="{{ old('amount', $prefill['amount'] ?? '') }}" readonly>
                         </div>
                         <div class="field">
                             <label>Reference</label>
@@ -57,15 +61,15 @@
                         </div>
                         <div class="field">
                             <label>Student Full Name</label>
-                            <input name="student_full_name" type="text" placeholder="John Doe" required>
+                            <input name="student_full_name" type="text" placeholder="John Doe" required value="{{ old('student_full_name', $prefill['student_full_name'] ?? '') }}" readonly>
                         </div>
                         <div class="field">
                             <label>Student Email</label>
-                            <input name="student_email" type="email" placeholder="john.doe@example.com">
+                            <input name="student_email" type="email" placeholder="john.doe@example.com" value="{{ old('student_email', $prefill['student_email'] ?? '') }}" readonly>
                         </div>
                         <div class="field">
                             <label>Course</label>
-                            <input name="course_name" type="text" placeholder="e.g. BSc Computer Science">
+                            <input name="course_name" type="text" placeholder="e.g. BSc Computer Science" value="{{ old('course_name', $prefill['course_name'] ?? '') }}" readonly>
                         </div>
                     </div>
                     <div class="actions">

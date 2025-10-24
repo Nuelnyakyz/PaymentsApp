@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MakePaymentController;
+use App\Http\Controllers\PaymentSessionController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\TransactionRecordsController as AdminTransactionRecordsController;
 use App\Http\Controllers\Admin\ReceiptRecordsController as AdminReceiptRecordsController;
@@ -27,6 +28,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/client-apps', [ClientAppController::class, 'index'])->name('client-apps.index');
     Route::post('/client-apps', [ClientAppController::class, 'store'])->name('client-apps.store');
     Route::patch('/client-apps/{clientApp}', [ClientAppController::class, 'update'])->name('client-apps.update');
+    Route::post('/client-apps/{clientApp}/regenerate', [ClientAppController::class, 'regenerate'])->name('client-apps.regenerate');
     Route::delete('/client-apps/{clientApp}', [ClientAppController::class, 'destroy'])->name('client-apps.destroy');
 });
 
@@ -37,6 +39,10 @@ Route::middleware('auth')->group(function () {
 });
 
 // Public payment form and initiation (accessible by external users)
+Route::post('/pay/prepare', [PaymentSessionController::class, 'prepare'])
+    ->name('pay.prepare')
+    ->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class]);
+
 Route::get('/pay', function () {
     return view('make-payment.index');
 })->name('pay.index');

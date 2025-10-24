@@ -68,6 +68,11 @@ class MakePaymentController extends Controller
             'raw_response' => $result,
         ]);
 
+        // 4️⃣ Cleanup session prefill on successful initiation
+        if (!($result['error'] ?? false)) {
+            $request->session()->forget('pay.prefill');
+        }
+
         return response()->json([
             'message' => 'Payment initiated',
             'payment_id' => $payment->id,

@@ -20,7 +20,14 @@ class WebhookController extends Controller
         $mpesaService = new MpesaService();
         $mpesaService->handleCallback($request->all());
 
-        // 3️⃣ Respond quickly to prevent timeout
+        // 3️⃣ Best-effort: clear any UI prefill left in session (callbacks usually won't carry the user's session cookie)
+        try {
+            $request->session()->forget('pay.prefill');
+        } catch (\Throwable $e) {
+            // ignore
+        }
+
+        // 4️⃣ Respond quickly to prevent timeout
         return response()->json([
             'ResultCode' => 0,
             'ResultDesc' => 'Callback processed successfully',
