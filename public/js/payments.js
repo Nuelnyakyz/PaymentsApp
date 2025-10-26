@@ -38,12 +38,12 @@
     });
   }
 
-  // Intercept all payment forms in the payment methods
-  const forms = Array.from(document.querySelectorAll('.payment-method form'));
-  forms.forEach(form => {
-    form.addEventListener('submit', async (e) => {
+  // Function to handle payment submission
+  async function handlePaymentSubmit(form, e) {
+    if (e) {
       e.preventDefault(); // CRITICAL: Prevent default form submission
       e.stopPropagation(); // Stop event bubbling
+    }
 
       // Open modal and show initiating step
       openModal();
@@ -137,6 +137,13 @@
         showStep('failed');
         show(btnClose);
       }
+  }
+
+  // Intercept all payment forms in the payment methods
+  const forms = Array.from(document.querySelectorAll('.payment-method form'));
+  forms.forEach(form => {
+    form.addEventListener('submit', async (e) => {
+      await handlePaymentSubmit(form, e);
     });
   });
 
@@ -164,9 +171,8 @@
     
     // Validate form before submission
     if (form.checkValidity()) {
-      // Create and dispatch a submit event that will be caught by our listener above
-      const submitEvent = new Event('submit', { cancelable: true, bubbles: true });
-      form.dispatchEvent(submitEvent);
+      // Directly call the handler without creating an event
+      handlePaymentSubmit(form, null);
     } else {
       form.reportValidity();
     }
