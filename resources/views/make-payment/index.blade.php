@@ -87,7 +87,7 @@
                                 <div class="form-grid">
                                     <div class="form-group">
                                         <label>Phone (M-Pesa)</label>
-                                        <input type="tel" name="phone" placeholder="2547XXXXXXXX" required>
+                                        <input type="tel" name="payer_phone" placeholder="2547XXXXXXXX" required>
                                         <div class="form-hint">Use international format e.g. 2547XXXXXXXX</div>
                                     </div>
                                 </div>
@@ -124,7 +124,7 @@
                                 <div class="form-grid">
                                     <div class="form-group">
                                         <label>Phone (Airtel)</label>
-                                        <input type="tel" name="phone" placeholder="2547XXXXXXXX" disabled>
+                                        <input type="tel" name="payer_phone" placeholder="2547XXXXXXXX" disabled>
                                     </div>
                                 </div>
                             </form>
@@ -206,7 +206,7 @@
                                 <div class="form-grid">
                                     <div class="form-group">
                                         <label>Phone Number</label>
-                                        <input type="tel" name="phone" placeholder="2547XXXXXXXX" disabled>
+                                        <input type="tel" name="payer_phone" placeholder="2547XXXXXXXX" disabled>
                                     </div>
                                 </div>
                             </form>
@@ -325,31 +325,9 @@
 
         // Complete Checkout button functionality
         document.querySelector('.btn-proceed').addEventListener('click', function() {
-            const activeMethod = document.querySelector('.payment-method.active');
-            if (!activeMethod) {
-                alert('Please select a payment method');
-                return;
-            }
-            
-            const form = activeMethod.querySelector('form');
-            if (!form) {
-                alert('Payment form not found');
-                return;
-            }
-            
-            // Check if payment method is disabled (coming soon)
-            const methodName = activeMethod.querySelector('.method-name');
-            const comingSoonBadge = methodName?.querySelector('.badge.soon');
-            if (comingSoonBadge) {
-                alert('This payment method is coming soon. Please select M-Pesa.');
-                return;
-            }
-            
-            // Validate form before submission
-            if (form.checkValidity()) {
-                form.submit();
-            } else {
-                form.reportValidity();
+            // Call the global function defined in payments.js
+            if (typeof window.triggerPaymentSubmit === 'function') {
+                window.triggerPaymentSubmit();
             }
         });
     </script>

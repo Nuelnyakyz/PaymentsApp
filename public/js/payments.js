@@ -8,7 +8,7 @@
   const btnClose = document.getElementById('pay-modal-close');
 
   function show(el) { 
-    if (el) el.style.display = 'block'; 
+    if (el) el.style.display = 'flex'; 
   }
   
   function hide(el) { 
@@ -42,7 +42,8 @@
   const forms = Array.from(document.querySelectorAll('.payment-method form'));
   forms.forEach(form => {
     form.addEventListener('submit', async (e) => {
-      e.preventDefault();
+      e.preventDefault(); // CRITICAL: Prevent default form submission
+      e.stopPropagation(); // Stop event bubbling
 
       // Open modal and show initiating step
       openModal();
@@ -138,4 +139,36 @@
       }
     });
   });
+
+  // Make the function globally accessible for the "Complete Checkout" button
+  window.triggerPaymentSubmit = function() {
+    const activeMethod = document.querySelector('.payment-method.active');
+    if (!activeMethod) {
+      alert('Please select a payment method');
+      return;
+    }
+    
+    const form = activeMethod.querySelector('form');
+    if (!form) {
+      alert('Payment form not found');
+      return;
+    }
+    
+    // Check if payment method is disabled (coming soon)
+    const methodName = activeMethod.querySelector('.method-name');
+    const comingSoonBadge = methodName?.querySelector('.badge.soon');
+    if (comingSoonBadge) {
+      alert('This payment method is coming soon. Please select M-Pesa.');
+      return;
+    }
+    
+    // Validate form before submission
+    if (form.checkValidity()) {
+      // Create and dispatch a submit event that will be caught by our listener above
+      const submitEvent = new Event('submit', { cancelable: true, bubbles: true });
+      form.dispatchEvent(submitEvent);
+    } else {
+      form.reportValidity();
+    }
+  };
 })();
