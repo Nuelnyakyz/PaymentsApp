@@ -310,26 +310,27 @@
 
     <script src="{{ asset('js/payments.js') }}"></script>
     <script>
-        // Payment method selection
-        document.querySelectorAll('.payment-method').forEach(method => {
-            method.querySelector('.method-header').addEventListener('click', function() {
-                // Remove active class from all methods
-                document.querySelectorAll('.payment-method').forEach(m => {
-                    m.classList.remove('active');
-                });
-                
-                // Add active class to clicked method
-                method.classList.add('active');
+    console.log('Inline script loaded');
+    console.log('triggerPaymentSubmit available?', typeof window.triggerPaymentSubmit);
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM loaded, triggerPaymentSubmit available?', typeof window.triggerPaymentSubmit);
+        
+        const btnProceed = document.querySelector('.btn-proceed');
+        console.log('Button found?', btnProceed);
+        
+        if (btnProceed) {
+            btnProceed.addEventListener('click', function() {
+                console.log('Button clicked!');
+                if (typeof window.triggerPaymentSubmit === 'function') {
+                    console.log('Calling triggerPaymentSubmit');
+                    window.triggerPaymentSubmit();
+                } else {
+                    console.error('triggerPaymentSubmit is not a function:', typeof window.triggerPaymentSubmit);
+                }
             });
-        });
-
-        // Complete Checkout button functionality
-        document.querySelector('.btn-proceed').addEventListener('click', function() {
-            // Call the global function defined in payments.js
-            if (typeof window.triggerPaymentSubmit === 'function') {
-                window.triggerPaymentSubmit();
-            }
-        });
-    </script>
+        }
+    });
+</script>
 </body>
 </html>
