@@ -90,6 +90,7 @@ body {
     max-width: 1340px;
     margin: 0 auto;
     padding: 40px 24px 24px;
+    background: transparent;
 }
 
 /* ========================================
@@ -104,28 +105,38 @@ body {
 /* Mobile: Summary first, then form */
 .checkout-left {
     order: 2;
+    background: #f7f9fa;
+    padding: 24px;
+    border-radius: 8px;
 }
 
 .checkout-right {
     order: 1;
+    background: transparent;
 }
 
 /* Desktop: Form left, summary right sticky */
 @media (min-width: 1024px) {
     .checkout-content {
         grid-template-columns: 1fr 520px;
-        gap: 40px;
+        gap: 0;
         align-items: start;
     }
 
     .checkout-left {
         order: 1;
+        padding: 32px;
+        background: #ffffff;
+        min-height: calc(100vh - 150px);
     }
 
     .checkout-right {
         order: 2;
         position: sticky;
         top: 90px;
+        background: #f7f9fa;
+        padding: 32px;
+        min-height: calc(100vh - 150px);
     }
 }
 
@@ -137,6 +148,7 @@ body {
     font-weight: 700;
     margin-bottom: 8px;
     color: var(--secondary);
+    margin-top: 0;
 }
 
 .section-header {

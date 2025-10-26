@@ -1,334 +1,357 @@
+
 <!DOCTYPE html>
 <html lang="en">
-    <head>
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payments</title>
+    <title>Payments - Snapay</title>
     <link rel="stylesheet" href="{{ asset('css/payments.css') }}">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    </head>
-    <body>
-    <div class="top-bar" style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: #fff; border-bottom: 1px solid #e5e7eb;">
-        <div class="logo" style="font-weight: 600; font-size: 18px;">
-            <img src="{{ asset('logo.png') }}" alt="Logo" style="height: 30px; width: auto;">
+    @vite(['resources/css/app.css','resources/js/app.js'])
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <div class="checkout-header">
+        <div class="checkout-header__inner">
+            <div class="brand">
+                <img src="{{ asset('Snapay.png') }}" alt="Snapay Logo">
+                <span class="text-primary">SNAPAY</span>
+            </div>
+            <a href="{{ url('/') }}" class="checkout-cancel">Cancel</a>
         </div>
-        <button onclick="window.history.back()" style="background: #ef4444; border: none; color: white; font-weight: 500; cursor: pointer; font-size: 14px; display: flex; align-items: center; gap: 5px; padding: 8px 16px; border-radius: 6px; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#dc2626'" onmouseout="this.style.backgroundColor='#ef4444'">
-            <i class="bi bi-x-lg"></i>
-            <span>Cancel</span>
-        </button>
     </div>
+
+    <!-- Main Content -->
     <div class="container">
-    <div class="heading">Checkout</div>
-    <div class="sub">Choose a payment method below.</div>
+        <div class="checkout-content">
+            <!-- Left Panel: Payment Form -->
+            <div class="checkout-left">
+                <h1 class="section-title">Checkout</h1>
 
-    <!-- Flash / Errors -->
-    @if ($errors->any())
-        <div class="errors">
-            <strong>There were validation errors:</strong>
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-    @if (session('status'))
-        <div class="success">{{ session('status') }}</div>
-    @endif
-
-    @php($prefill = session('pay.prefill', []))
-
-    <div class="confirm-strip" style="display:flex;gap:12px;flex-wrap:wrap;margin:12px 0;">
-        <div class="card" style="flex:1 1 200px;border:1px solid #e5e7eb;border-radius:10px;padding:12px;background:#fff;min-width:200px;">
-            <div style="font-size:12px;color:#6b7280;">Student Name</div>
-            <div style="font-weight:600;">{{ $prefill['student_full_name'] ?? '—' }}</div>
-        </div>
-        <div class="card" style="flex:1 1 200px;border:1px solid #e5e7eb;border-radius:10px;padding:12px;background:#fff;min-width:200px;">
-            <div style="font-size:12px;color:#6b7280;">Student Email</div>
-            <div style="font-weight:600;">{{ $prefill['student_email'] ?? '—' }}</div>
-        </div>
-        <div class="card" style="flex:1 1 200px;border:1px solid #e5e7eb;border-radius:10px;padding:12px;background:#fff;min-width:200px;">
-            <div style="font-size:12px;color:#6b7280;">Course</div>
-            <div style="font-weight:600;">{{ $prefill['course_name'] ?? '—' }}</div>
-        </div>
-        <div class="card" style="flex:1 1 200px;border:1px solid #e5e7eb;border-radius:10px;padding:12px;background:#fff;min-width:200px;">
-            <div style="font-size:12px;color:#6b7280;">Amount</div>
-            <div style="font-weight:600;">{{ isset($prefill['amount']) ? ('KES ' . number_format((float)$prefill['amount'], 2, '.', ',')) : '—' }}</div>
-        </div>
-    </div>
-
-    <div class="grid" id="payment-accordion">
-        <!-- M-Pesa -->
-        <div class="service" data-service="mpesa">
-            <div class="service-header">
-                <div class="service-title">
-                    <img src="{{ asset('mpesa.png') }}" alt="M-Pesa" width="22" height="22"/>
-                    <span>M-Pesa</span>
-                    <span class="badge">STK Push</span>
+                <div class="section-header">
+                    <h3 class="text-primary">Payment method</h3>
+                    <div class="secure-badge">
+                        <span>Secure and encrypted</span>
+                        <span>🔒</span>
+                    </div>
                 </div>
-                <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-            </div>
-            <div class="form-wrap">
-                <form method="POST" action="{{ route('pay.initiate') }}">
-                    @csrf
-                    <input type="hidden" name="payment_method" value="mpesa">
-                    @if(!empty($prefill['client_app_id'] ?? null))
-                        <input type="hidden" name="client_app_id" value="{{ $prefill['client_app_id'] }}">
-                    @endif
-                    <div class="row">
-                        <div class="field">
-                            <label>Phone (M-Pesa)</label>
-                            <input name="phone" type="text" placeholder="2547XXXXXXXX" required>
-                            <div class="hint">Use international format e.g. 2547XXXXXXXX</div>
-                        </div>
-                        <div class="field">
-                            <label>Amount</label>
-                            <input name="amount" type="number" min="1" step="0.01" placeholder="1000" required value="{{ old('amount', $prefill['amount'] ?? '') }}" readonly>
-                        </div>
-                        <div class="field">
-                            <label>Reference</label>
-                            <input name="reference" type="text" placeholder="Auto-generated" readonly>
-                        </div>
-                        <div class="field">
-                            <label>Student Full Name</label>
-                            <input name="student_full_name" type="text" placeholder="John Doe" required value="{{ old('student_full_name', $prefill['student_full_name'] ?? '') }}" readonly>
-                        </div>
-                        <div class="field">
-                            <label>Student Email</label>
-                            <input name="student_email" type="email" placeholder="john.doe@example.com" value="{{ old('student_email', $prefill['student_email'] ?? '') }}" readonly>
-                        </div>
-                        <div class="field">
-                            <label>Course</label>
-                            <input name="course_name" type="text" placeholder="e.g. BSc Computer Science" value="{{ old('course_name', $prefill['course_name'] ?? '') }}" readonly>
-                        </div>
-                    </div>
-                    <div class="actions">
-                        <button class="btn primary" type="submit">Pay with M-Pesa</button>
-                    </div>
-                </form>
-            </div>
-        </div>
 
-        <!-- Airtel Money -->
-        <div class="service" data-service="airtel">
-            <div class="service-header">
-                <div class="service-title">
-                    <img src="{{ asset('airtel-money.png') }}" alt="Airtel Money" width="22" height="22"/>
-                    <span>Airtel Money</span>
-                    <span class="badge">Coming soon</span>
+                <!-- Flash Messages / Errors -->
+                @if ($errors->any())
+                    <div class="errors">
+                        <strong>There were validation errors:</strong>
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+                
+                @if (session('status'))
+                    <div class="success">{{ session('status') }}</div>
+                @endif
+
+                @php($prefill = session('pay.prefill', []))
+
+                <!-- Payment Methods -->
+                <div class="payment-methods">
+                    <!-- M-Pesa -->
+                    <div class="payment-method active" data-method="mpesa">
+                        <div class="method-header">
+                            <div class="method-radio"></div>
+                            <div class="method-info">
+                                <img src="{{ asset('mpesa.png') }}" alt="M-Pesa" class="method-icon">
+                                <div class="method-name">
+                                    M-Pesa
+                                    <span class="badge">STK Push</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="payment-form">
+                            <form method="POST" action="{{ route('pay.initiate') }}">
+                                @csrf
+                                <input type="hidden" name="payment_method" value="mpesa">
+                                @if(!empty($prefill['client_app_id'] ?? null))
+                                    <input type="hidden" name="client_app_id" value="{{ $prefill['client_app_id'] }}">
+                                @endif
+                                
+                                <!-- Hidden fields: prefilled from session, displayed in summary -->
+                                <input type="hidden" name="amount" value="{{ old('amount', $prefill['amount'] ?? '') }}">
+                                <input type="hidden" name="student_full_name" value="{{ old('student_full_name', $prefill['student_full_name'] ?? '') }}">
+                                <input type="hidden" name="student_email" value="{{ old('student_email', $prefill['student_email'] ?? '') }}">
+                                <input type="hidden" name="course_name" value="{{ old('course_name', $prefill['course_name'] ?? '') }}">
+                                
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label>Phone (M-Pesa)</label>
+                                        <input type="tel" name="phone" placeholder="2547XXXXXXXX" required>
+                                        <div class="form-hint">Use international format e.g. 2547XXXXXXXX</div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Airtel Money -->
+                    <div class="payment-method" data-method="airtel">
+                        <div class="method-header">
+                            <div class="method-radio"></div>
+                            <div class="method-info">
+                                <img src="{{ asset('airtel-money.png') }}" alt="Airtel Money" class="method-icon">
+                                <div class="method-name">
+                                    Airtel Money
+                                    <span class="badge soon">Coming soon</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="payment-form">
+                            <form method="POST" action="{{ route('pay.initiate') }}">
+                                @csrf
+                                <input type="hidden" name="payment_method" value="airtel">
+                                @if(!empty($prefill['client_app_id'] ?? null))
+                                    <input type="hidden" name="client_app_id" value="{{ $prefill['client_app_id'] }}">
+                                @endif
+                                
+                                <!-- Hidden fields: prefilled from session, displayed in summary -->
+                                <input type="hidden" name="amount" value="{{ old('amount', $prefill['amount'] ?? '') }}">
+                                <input type="hidden" name="student_full_name" value="{{ old('student_full_name', $prefill['student_full_name'] ?? '') }}">
+                                <input type="hidden" name="student_email" value="{{ old('student_email', $prefill['student_email'] ?? '') }}">
+                                <input type="hidden" name="course_name" value="{{ old('course_name', $prefill['course_name'] ?? '') }}">
+                                
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label>Phone (Airtel)</label>
+                                        <input type="tel" name="phone" placeholder="2547XXXXXXXX" disabled>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Debit/Credit Card -->
+                    <div class="payment-method" data-method="card">
+                        <div class="method-header">
+                            <div class="method-radio"></div>
+                            <div class="method-info">
+                                <img src="{{ asset('card.jpg') }}" alt="Card" class="method-icon">
+                                <div class="method-name">
+                                    Debit/Credit Card
+                                    <span class="badge soon">Coming soon</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="payment-form">
+                            <form method="POST" action="{{ route('pay.initiate') }}">
+                                @csrf
+                                <input type="hidden" name="payment_method" value="card">
+                                @if(!empty($prefill['client_app_id'] ?? null))
+                                    <input type="hidden" name="client_app_id" value="{{ $prefill['client_app_id'] }}">
+                                @endif
+                                
+                                <!-- Hidden fields: prefilled from session, displayed in summary -->
+                                <input type="hidden" name="amount" value="{{ old('amount', $prefill['amount'] ?? '') }}">
+                                <input type="hidden" name="student_full_name" value="{{ old('student_full_name', $prefill['student_full_name'] ?? '') }}">
+                                <input type="hidden" name="student_email" value="{{ old('student_email', $prefill['student_email'] ?? '') }}">
+                                <input type="hidden" name="course_name" value="{{ old('course_name', $prefill['course_name'] ?? '') }}">
+                                
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label>Card Number</label>
+                                        <input type="text" name="card_number" placeholder="4242 4242 4242 4242" disabled>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Expiry Date</label>
+                                        <input type="text" name="card_expiry" placeholder="MM/YY" disabled>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>CVV</label>
+                                        <input type="text" name="card_cvv" placeholder="123" disabled>
+                                    </div>     
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- eCitizen -->
+                    <div class="payment-method" data-method="ecitizen">
+                        <div class="method-header">
+                            <div class="method-radio"></div>
+                            <div class="method-info">
+                                <img src="{{ asset('e-citizen.png') }}" alt="eCitizen" class="method-icon">
+                                <div class="method-name">
+                                    eCitizen
+                                    <span class="badge soon">Coming soon</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="payment-form">
+                            <form method="POST" action="{{ route('pay.initiate') }}">
+                                @csrf
+                                <input type="hidden" name="payment_method" value="ecitizen">
+                                @if(!empty($prefill['client_app_id'] ?? null))
+                                    <input type="hidden" name="client_app_id" value="{{ $prefill['client_app_id'] }}">
+                                @endif
+                                
+                                <!-- Hidden fields: prefilled from session, displayed in summary -->
+                                <input type="hidden" name="amount" value="{{ old('amount', $prefill['amount'] ?? '') }}">
+                                <input type="hidden" name="student_full_name" value="{{ old('student_full_name', $prefill['student_full_name'] ?? '') }}">
+                                <input type="hidden" name="student_email" value="{{ old('student_email', $prefill['student_email'] ?? '') }}">
+                                <input type="hidden" name="course_name" value="{{ old('course_name', $prefill['course_name'] ?? '') }}">
+                                
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label>Phone Number</label>
+                                        <input type="tel" name="phone" placeholder="2547XXXXXXXX" disabled>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
-                <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
             </div>
-            <div class="form-wrap">
-                <form method="POST" action="{{ route('pay.initiate') }}">
-                    @csrf
-                    <input type="hidden" name="payment_method" value="airtel">
-                    @if(!empty($prefill['client_app_id'] ?? null))
-                        <input type="hidden" name="client_app_id" value="{{ $prefill['client_app_id'] }}">
-                    @endif
-                    <div class="row">
-                        <div class="field">
-                            <label>Phone (Airtel)</label>
-                            <input name="phone" type="text" placeholder="2547XXXXXXXX" required>
-                        </div>
-                        <div class="field">
-                            <label>Amount</label>
-                            <input name="amount" type="number" min="1" step="0.01" placeholder="1000" required value="{{ old('amount', $prefill['amount'] ?? '') }}" readonly>
-                        </div>
-                        <div class="field">
-                            <label>Reference</label>
-                            <input name="reference" type="text" placeholder="Auto-generated" readonly>
-                        </div>
-                        <div class="field">
-                            <label>Student Full Name</label>
-                            <input name="student_full_name" type="text" placeholder="John Doe" required value="{{ old('student_full_name', $prefill['student_full_name'] ?? '') }}" readonly>
-                        </div>
-                        <div class="field">
-                            <label>Student Email</label>
-                            <input name="student_email" type="email" placeholder="john.doe@example.com" value="{{ old('student_email', $prefill['student_email'] ?? '') }}" readonly>
-                        </div>
-                        <div class="field">
-                            <label>Course</label>
-                            <input name="course_name" type="text" placeholder="e.g. BSc Computer Science" value="{{ old('course_name', $prefill['course_name'] ?? '') }}" readonly>
-                        </div>
-                    </div>
-                    <div class="actions">
-                        <button class="btn primary" type="submit">Pay with Airtel</button>
-                        <span class="hint">Backend processing for Airtel can be implemented next.</span>
-                    </div>
-                </form>
-            </div>
-        </div>
 
-        <!-- eCitizen -->
-        <div class="service" data-service="ecitizen">
-            <div class="service-header">
-                <div class="service-title">
-                    <img src="{{ asset('e-citizen.png') }}" alt="eCitizen" width="22" height="22"/>
-                    <span>eCitizen</span>
-                    <span class="badge">Coming soon</span>
+            <!-- Right Panel: Order Summary -->
+            <div class="checkout-right">
+                <div class="summary-card">
+                    <h2 class="summary-title text-primary">Student Details</h2>
+                    
+                    <div class="student-info">
+                        <div class="info-row">
+                            <span class="label">Student:</span>
+                            <span>{{ $prefill['student_full_name'] ?? '—' }}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Email:</span>
+                            <span>{{ $prefill['student_email'] ?? '—' }}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Course:</span>
+                            <span>{{ $prefill['course_name'] ?? '—' }}</span>
+                        </div>
+                    </div>
+
+                    <hr class="summary-divider">
+
+                    <h2 class="summary-title text-primary">Order summary</h2>
+                    
+                    <div class="summary-row">
+                        <span class="label">Original Price:</span>
+                        <span>{{ isset($prefill['amount']) ? ('KES ' . number_format((float)$prefill['amount'], 2, '.', ',')) : '—' }}</span>
+                    </div>
+                    
+                    <div class="summary-row">
+                        <span class="label">Discounts:</span>
+                        <span>- KES 0.00</span>
+                    </div>
+                    
+                    <hr class="summary-divider">
+                    
+                    <div class="summary-total">
+                        <span class="text-primary">Total</span>
+                        <span class="text-secondary">{{ isset($prefill['amount']) ? ('KES ' . number_format((float)$prefill['amount'], 2, '.', ',')) : '—' }}</span>
+                    </div>
+                    
+                    <div class="summary-note">
+                        By completing your purchase, you agree to these <a href="#">Terms of Use</a>.
+                    </div>
+                    
+                    <button type="button" class="btn-proceed bg-primary">Complete Checkout</button>
+                    
+                    <div class="guarantee">
+                        <div class="guarantee-title">30-Day Money-Back Guarantee</div>
+                        <div class="guarantee-text">
+                            Not satisfied? Get a full refund within 30 days. Simple and straightforward!
+                        </div>
+                    </div>
                 </div>
-                <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-            </div>
-            <div class="form-wrap">
-                <form method="POST" action="{{ route('pay.initiate') }}">
-                    @csrf
-                    <input type="hidden" name="payment_method" value="ecitizen">
-                    @if(!empty($prefill['client_app_id'] ?? null))
-                        <input type="hidden" name="client_app_id" value="{{ $prefill['client_app_id'] }}">
-                    @endif
-                    <div class="row">
-                        <div class="field">
-                            <label>Phone</label>
-                            <input name="phone" type="text" placeholder="2547XXXXXXXX" required>
-                        </div>
-                        <div class="field">
-                            <label>Amount</label>
-                            <input name="amount" type="number" min="1" step="0.01" placeholder="1000" required value="{{ old('amount', $prefill['amount'] ?? '') }}" readonly>
-                        </div>
-                        <div class="field">
-                            <label>Reference</label>
-                            <input name="reference" type="text" placeholder="Auto-generated" readonly>
-                        </div>
-                        <div class="field">
-                            <label>Student Full Name</label>
-                            <input name="student_full_name" type="text" placeholder="John Doe" required value="{{ old('student_full_name', $prefill['student_full_name'] ?? '') }}" readonly>
-                        </div>
-                        <div class="field">
-                            <label>Student Email</label>
-                            <input name="student_email" type="email" placeholder="john.doe@example.com" value="{{ old('student_email', $prefill['student_email'] ?? '') }}" readonly>
-                        </div>
-                        <div class="field">
-                            <label>Course</label>
-                            <input name="course_name" type="text" placeholder="e.g. BSc Computer Science" value="{{ old('course_name', $prefill['course_name'] ?? '') }}" readonly>
-                        </div>
-                    </div>
-                    <div class="actions">
-                        <button class="btn primary" type="submit">Pay via eCitizen</button>
-                        <span class="hint">Backend processing for eCitizen can be implemented next.</span>
-                    </div>
-                </form>
             </div>
         </div>
+    </div>
 
-        <!-- Card -->
-        <div class="service" data-service="card">
-            <div class="service-header">
-                <div class="service-title">
-                    <img src="{{ asset('card.jpg') }}" alt="Card" width="22" height="22"/>
-                    <span>Debit/Credit Card</span>
-                    <span class="badge">Coming soon</span>
+    <!-- Payment Modal -->
+    <div id="pay-modal" class="pay-modal" style="display:none;">
+        <div class="pay-modal__backdrop"></div>
+        <div class="pay-modal__dialog">
+            <div class="pay-modal__header">
+                <div class="pay-modal__title">Processing Payment</div>
+            </div>
+            <div class="pay-modal__body">
+                <div id="pay-modal-step-init" class="pay-step">
+                    <div class="pay-step__icon spinner"></div>
+                    <div class="pay-step__title">Initiating payment…</div>
+                    <div class="pay-step__desc">Please wait while we start your payment.</div>
                 </div>
-                <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                <div id="pay-modal-step-wait" class="pay-step" style="display:none;">
+                    <div class="pay-step__icon phone"></div>
+                    <div class="pay-step__title">Check your phone</div>
+                    <div class="pay-step__desc">We sent an STK push. Enter your M-Pesa PIN to approve the payment.</div>
+                </div>
+                <div id="pay-modal-step-success" class="pay-step" style="display:none;">
+                    <div class="pay-step__icon success"></div>
+                    <div class="pay-step__title">Payment approved</div>
+                    <div class="pay-step__desc">Redirecting you to complete enrollment…</div>
+                </div>
+                <div id="pay-modal-step-failed" class="pay-step" style="display:none;">
+                    <div class="pay-step__icon error"></div>
+                    <div class="pay-step__title">Payment failed</div>
+                    <div class="pay-step__desc">Your payment did not complete. You can close this dialog and try again.</div>
+                </div>
             </div>
-            <div class="form-wrap">
-                <form method="POST" action="{{ route('pay.initiate') }}">
-                    @csrf
-                    <input type="hidden" name="payment_method" value="card">
-                    @if(!empty($prefill['client_app_id'] ?? null))
-                        <input type="hidden" name="client_app_id" value="{{ $prefill['client_app_id'] }}">
-                    @endif
-                    <div class="row">
-                        <div class="field">
-                            <label>Phone (for receipt)</label>
-                            <input name="phone" type="text" placeholder="2547XXXXXXXX" required>
-                            <div class="hint">Used for receipts/notifications.</div>
-                        </div>
-                        <div class="field">
-                            <label>Amount</label>
-                            <input name="amount" type="number" min="1" step="0.01" placeholder="1000" required value="{{ old('amount', $prefill['amount'] ?? '') }}" readonly>
-                        </div>
-                        <div class="field">
-                            <label>Reference</label>
-                            <input name="reference" type="text" placeholder="Auto-generated" readonly>
-                        </div>
-                        <div class="field">
-                            <label>Student Full Name</label>
-                            <input name="student_full_name" type="text" placeholder="John Doe" required value="{{ old('student_full_name', $prefill['student_full_name'] ?? '') }}" readonly>
-                        </div>
-                        <div class="field">
-                            <label>Student Email</label>
-                            <input name="student_email" type="email" placeholder="john.doe@example.com" value="{{ old('student_email', $prefill['student_email'] ?? '') }}" readonly>
-                        </div>
-                        <div class="field">
-                            <label>Course</label>
-                            <input name="course_name" type="text" placeholder="e.g. BSc Computer Science" value="{{ old('course_name', $prefill['course_name'] ?? '') }}" readonly>
-                        </div>
-                        <div class="field">
-                            <label>Card Number</label>
-                            <input name="card_number" inputmode="numeric" autocomplete="cc-number" placeholder="4242 4242 4242 4242" />
-                        </div>
-                        <div class="field">
-                            <label>Expiry</label>
-                            <input name="card_expiry" placeholder="MM/YY" />
-                        </div>
-                        <div class="field">
-                            <label>CVV</label>
-                            <input name="card_cvv" inputmode="numeric" placeholder="123" />
-                        </div>
-                    </div>
-                    <div class="actions">
-                        <button class="btn primary" type="submit">Pay with Card</button>
-                        <span class="hint">Card processing not yet implemented in backend.</span>
-                    </div>
-                </form>
+            <div class="pay-modal__footer">
+                <button id="pay-modal-close" class="btn" type="button" style="display:none;">Close</button>
             </div>
         </div>
     </div>
-</div>
 
-<div id="pay-modal" class="pay-modal" style="display:none;">
-  <div class="pay-modal__backdrop"></div>
-  <div class="pay-modal__dialog">
-    <div class="pay-modal__header">
-      <div class="pay-modal__title">Processing Payment</div>
-    </div>
-    <div class="pay-modal__body">
-      <div id="pay-modal-step-init" class="pay-step">
-        <div class="pay-step__icon spinner"></div>
-        <div class="pay-step__title">Initiating payment…</div>
-        <div class="pay-step__desc">Please wait while we start your payment.</div>
-      </div>
-      <div id="pay-modal-step-wait" class="pay-step" style="display:none;">
-        <div class="pay-step__icon phone"></div>
-        <div class="pay-step__title">Check your phone</div>
-        <div class="pay-step__desc">We sent an STK push. Enter your M-Pesa PIN to approve the payment.</div>
-      </div>
-      <div id="pay-modal-step-success" class="pay-step" style="display:none;">
-        <div class="pay-step__icon success"></div>
-        <div class="pay-step__title">Payment approved</div>
-        <div class="pay-step__desc">Redirecting you to complete enrollment…</div>
-      </div>
-      <div id="pay-modal-step-failed" class="pay-step" style="display:none;">
-        <div class="pay-step__icon error"></div>
-        <div class="pay-step__title">Payment failed</div>
-        <div class="pay-step__desc">Your payment did not complete. You can close this dialog and try again.</div>
-      </div>
-    </div>
-    <div class="pay-modal__footer">
-      <button id="pay-modal-close" class="btn" type="button" style="display:none;">Close</button>
-    </div>
-  </div>
-  <style>
-    .pay-modal{position:fixed;inset:0;z-index:1000}
-    .pay-modal__backdrop{position:absolute;inset:0;background:rgba(0,0,0,.5)}
-    .pay-modal__dialog{position:relative;max-width:520px;margin:10vh auto;background:#fff;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.2);overflow:hidden}
-    .pay-modal__header{padding:16px 20px;border-bottom:1px solid #eee}
-    .pay-modal__title{font-weight:600;font-size:18px}
-    .pay-modal__body{padding:20px}
-    .pay-step{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px}
-    .pay-step__icon{width:46px;height:46px;border-radius:50%;display:inline-block}
-    .pay-step__icon.spinner{border:4px solid #e5e7eb;border-top-color:#2563eb;animation:spin 1s linear infinite}
-    .pay-step__icon.success{background:#22c55e}
-    .pay-step__icon.error{background:#ef4444}
-    .pay-step__icon.phone{background:#2563eb}
-    .pay-step__title{font-weight:600}
-    .pay-step__desc{color:#6b7280}
-    .pay-modal__footer{padding:16px 20px;border-top:1px solid #eee;display:flex;justify-content:flex-end}
-    @keyframes spin{to{transform:rotate(360deg)}}
-  </style>
-</div>
+    <script src="{{ asset('js/payments.js') }}"></script>
+    <script>
+        // Payment method selection
+        document.querySelectorAll('.payment-method').forEach(method => {
+            method.querySelector('.method-header').addEventListener('click', function() {
+                // Remove active class from all methods
+                document.querySelectorAll('.payment-method').forEach(m => {
+                    m.classList.remove('active');
+                });
+                
+                // Add active class to clicked method
+                method.classList.add('active');
+            });
+        });
 
-<script src="{{ asset('js/payments.js') }}"></script>
+        // Complete Checkout button functionality
+        document.querySelector('.btn-proceed').addEventListener('click', function() {
+            const activeMethod = document.querySelector('.payment-method.active');
+            if (!activeMethod) {
+                alert('Please select a payment method');
+                return;
+            }
+            
+            const form = activeMethod.querySelector('form');
+            if (!form) {
+                alert('Payment form not found');
+                return;
+            }
+            
+            // Check if payment method is disabled (coming soon)
+            const methodName = activeMethod.querySelector('.method-name');
+            const comingSoonBadge = methodName?.querySelector('.badge.soon');
+            if (comingSoonBadge) {
+                alert('This payment method is coming soon. Please select M-Pesa.');
+                return;
+            }
+            
+            // Validate form before submission
+            if (form.checkValidity()) {
+                form.submit();
+            } else {
+                form.reportValidity();
+            }
+        });
+    </script>
 </body>
 </html>
