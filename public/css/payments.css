@@ -480,36 +480,48 @@ body {
     position: fixed;
     inset: 0;
     z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.2s ease-out;
 }
 
 .pay-modal__backdrop {
     position: absolute;
     inset: 0;
-    background: rgba(0,0,0,.5);
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(2px);
 }
 
 .pay-modal__dialog {
     position: relative;
-    max-width: 520px;
-    margin: 10vh auto;
+    max-width: 480px;
+    width: 90%;
     background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0,0,0,.2);
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     overflow: hidden;
+    animation: slideUp 0.3s ease-out;
 }
 
 .pay-modal__header {
-    padding: 16px 20px;
-    border-bottom: 1px solid #eee;
+    padding: 24px 24px 16px;
+    border-bottom: 1px solid #f0f0f0;
 }
 
 .pay-modal__title {
-    font-weight: 600;
-    font-size: 18px;
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--text);
+    text-align: center;
 }
 
 .pay-modal__body {
-    padding: 20px;
+    padding: 40px 24px;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .pay-step {
@@ -517,52 +529,145 @@ body {
     flex-direction: column;
     align-items: center;
     text-align: center;
-    gap: 8px;
+    gap: 16px;
+    width: 100%;
+    animation: fadeIn 0.3s ease-out;
 }
 
 .pay-step__icon {
-    width: 46px;
-    height: 46px;
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
-    display: inline-block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin-bottom: 8px;
 }
 
 .pay-step__icon.spinner {
-    border: 4px solid #e5e7eb;
-    border-top-color: #2563eb;
+    border: 5px solid #e5e7eb;
+    border-top-color: var(--primary);
     animation: spin 1s linear infinite;
 }
 
 .pay-step__icon.success {
-    background: #22c55e;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4);
+}
+
+.pay-step__icon.success::before {
+    content: '✓';
+    color: white;
+    font-size: 48px;
+    font-weight: bold;
+    animation: scaleIn 0.4s ease-out;
 }
 
 .pay-step__icon.error {
-    background: #ef4444;
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    box-shadow: 0 4px 20px rgba(239, 68, 68, 0.4);
+}
+
+.pay-step__icon.error::before {
+    content: '✕';
+    color: white;
+    font-size: 48px;
+    font-weight: bold;
+    animation: scaleIn 0.4s ease-out;
 }
 
 .pay-step__icon.phone {
-    background: #2563eb;
+    background: linear-gradient(135deg, var(--primary) 0%, #025e6f 100%);
+    box-shadow: 0 4px 20px rgba(3, 123, 144, 0.4);
+}
+
+.pay-step__icon.phone::before {
+    content: '📱';
+    font-size: 42px;
+    animation: pulse 2s ease-in-out infinite;
 }
 
 .pay-step__title {
-    font-weight: 600;
+    font-weight: 700;
+    font-size: 22px;
+    color: var(--text);
+    margin: 0;
 }
 
 .pay-step__desc {
-    color: #6b7280;
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.6;
+    max-width: 320px;
 }
 
 .pay-modal__footer {
-    padding: 16px 20px;
-    border-top: 1px solid #eee;
+    padding: 16px 24px 24px;
+    border-top: 1px solid #f0f0f0;
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
+    gap: 12px;
+}
+
+.pay-modal__footer .btn {
+    min-width: 120px;
+    padding: 12px 28px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.2s;
+    background: var(--muted);
+    color: white;
+}
+
+.pay-modal__footer .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    background: var(--text);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
 
 @keyframes spin {
     to {
         transform: rotate(360deg);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        transform: scale(0);
+    }
+    to {
+        transform: scale(1);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
     }
 }
 

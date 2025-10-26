@@ -283,23 +283,23 @@
             <div class="pay-modal__body">
                 <div id="pay-modal-step-init" class="pay-step">
                     <div class="pay-step__icon spinner"></div>
-                    <div class="pay-step__title">Initiating payment…</div>
-                    <div class="pay-step__desc">Please wait while we start your payment.</div>
+                    <div class="pay-step__title">Initiating Payment</div>
+                    <div class="pay-step__desc">Please wait while we process your request...</div>
                 </div>
                 <div id="pay-modal-step-wait" class="pay-step" style="display:none;">
                     <div class="pay-step__icon phone"></div>
-                    <div class="pay-step__title">Check your phone</div>
-                    <div class="pay-step__desc">We sent an STK push. Enter your M-Pesa PIN to approve the payment.</div>
+                    <div class="pay-step__title">Check Your Phone</div>
+                    <div class="pay-step__desc">You'll receive an M-Pesa prompt. Enter your PIN to complete the payment.</div>
                 </div>
                 <div id="pay-modal-step-success" class="pay-step" style="display:none;">
                     <div class="pay-step__icon success"></div>
-                    <div class="pay-step__title">Payment approved</div>
-                    <div class="pay-step__desc">Redirecting you to complete enrollment…</div>
+                    <div class="pay-step__title">Payment Successful!</div>
+                    <div class="pay-step__desc">Your payment has been confirmed. Redirecting to client app...</div>
                 </div>
                 <div id="pay-modal-step-failed" class="pay-step" style="display:none;">
                     <div class="pay-step__icon error"></div>
-                    <div class="pay-step__title">Payment failed</div>
-                    <div class="pay-step__desc">Your payment did not complete. You can close this dialog and try again.</div>
+                    <div class="pay-step__title">Payment Failed</div>
+                    <div class="pay-step__desc">Your payment could not be completed. Please try again or contact support.</div>
                 </div>
             </div>
             <div class="pay-modal__footer">

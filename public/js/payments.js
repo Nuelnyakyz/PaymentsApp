@@ -1,31 +1,4 @@
 (function() {
-  const accordion = document.getElementById('payment-accordion');
-  const services = Array.from(accordion.querySelectorAll('.service'));
-
-  function closeAll() {
-    services.forEach(s => {
-      s.querySelector('.form-wrap').style.display = 'none';
-      s.querySelector('.chevron').classList.remove('open');
-    });
-  }
-
-  services.forEach(service => {
-    const header = service.querySelector('.service-header');
-    const formWrap = service.querySelector('.form-wrap');
-    const chevron = service.querySelector('.chevron');
-
-    header.addEventListener('click', () => {
-      const isOpen = formWrap.style.display === 'block';
-      closeAll();
-      if (!isOpen) {
-        formWrap.style.display = 'block';
-        chevron.classList.add('open');
-        const first = formWrap.querySelector('input, select, textarea');
-        if (first) first.focus();
-      }
-    });
-  });
-
   // Modal helpers
   const modal = document.getElementById('pay-modal');
   const stepInit = document.getElementById('pay-modal-step-init');
@@ -34,8 +7,14 @@
   const stepFailed = document.getElementById('pay-modal-step-failed');
   const btnClose = document.getElementById('pay-modal-close');
 
-  function show(el) { el.style.display = 'block'; }
-  function hide(el) { el.style.display = 'none'; }
+  function show(el) { 
+    if (el) el.style.display = 'block'; 
+  }
+  
+  function hide(el) { 
+    if (el) el.style.display = 'none'; 
+  }
+  
   function showStep(which) {
     [stepInit, stepWait, stepSuccess, stepFailed].forEach(hide);
     if (which === 'init') show(stepInit);
@@ -44,19 +23,28 @@
     else if (which === 'failed') show(stepFailed);
   }
 
-  function openModal() { modal.style.display = 'block'; }
-  function closeModal() { modal.style.display = 'none'; }
+  function openModal() { 
+    if (modal) modal.style.display = 'flex'; 
+  }
+  
+  function closeModal() { 
+    if (modal) modal.style.display = 'none'; 
+  }
 
-  btnClose && btnClose.addEventListener('click', () => {
-    closeModal();
-  });
+  // Close modal button
+  if (btnClose) {
+    btnClose.addEventListener('click', () => {
+      closeModal();
+    });
+  }
 
-  // Intercept all payment forms
-  const forms = Array.from(document.querySelectorAll('#payment-accordion form'));
+  // Intercept all payment forms in the payment methods
+  const forms = Array.from(document.querySelectorAll('.payment-method form'));
   forms.forEach(form => {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
+      // Open modal and show initiating step
       openModal();
       hide(btnClose);
       showStep('init');
@@ -67,6 +55,7 @@
       const csrf = tokenInput ? tokenInput.value : '';
 
       try {
+        // Initiate payment
         const resp = await fetch(action, {
           method: 'POST',
           headers: {
@@ -78,14 +67,16 @@
 
         const data = await resp.json().catch(() => ({}));
 
-        if (!resp.ok || data.response?.error) {
+        // Check for errors in response
+        if (!resp.ok || data.error || data.response?.error) {
           showStep('failed');
           show(btnClose);
           return;
         }
 
-        // Move to wait step, start polling for status changes
+        // Move to wait step - STK push sent
         showStep('wait');
+        
         const paymentId = data.payment_id;
         if (!paymentId) {
           showStep('failed');
@@ -93,6 +84,7 @@
           return;
         }
 
+        // Poll for payment status
         const pollUrl = `/pay/status/${paymentId}`;
         const completeUrl = `/pay/complete/${paymentId}`;
 
@@ -102,33 +94,45 @@
 
         while (attempts < maxAttempts) {
           attempts++;
+          
           try {
-            const sresp = await fetch(pollUrl, { headers: { 'Accept': 'application/json' } });
+            const sresp = await fetch(pollUrl, { 
+              headers: { 'Accept': 'application/json' } 
+            });
             const sdata = await sresp.json();
             const status = (sdata.status || '').toLowerCase();
+            
             if (status === 'success') {
+              // Payment successful
               showStep('success');
-              // Small delay for UX, then complete to post callback and redirect
-              await delay(600);
+              // Brief delay for user to see success message
+              await delay(1500);
+              // Redirect to complete endpoint
               window.location.href = completeUrl;
               return;
             }
-            if (status === 'failed') {
+            
+            if (status === 'failed' || status === 'cancelled') {
+              // Payment failed
               showStep('failed');
               show(btnClose);
               return;
             }
-          } catch (_) {
-            // ignore transient errors
+          } catch (err) {
+            // Ignore transient network errors, continue polling
+            console.log('Polling error:', err);
           }
+          
+          // Wait before next poll
           await delay(3000);
         }
 
-        // Timeout
+        // Timeout - no response after max attempts
         showStep('failed');
         show(btnClose);
 
       } catch (err) {
+        console.error('Payment error:', err);
         showStep('failed');
         show(btnClose);
       }
