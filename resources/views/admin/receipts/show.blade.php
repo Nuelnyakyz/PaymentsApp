@@ -5,65 +5,109 @@
 
     <div class="py-8 max-w-3xl mx-auto sm:px-6 lg:px-8">
         <div class="bg-white shadow rounded p-8">
-            <div class="flex items-start justify-between mb-8">
-                <div>
-                    <div class="text-2xl font-bold tracking-wide">OPEN UNIVERSITY OF KENYA</div>
-                    <div class="text-gray-600">Official Payment Receipt</div>
-                </div>
-                <div class="text-right">
-                    <div class="text-sm text-gray-500">Receipt #</div>
-                    <div class="text-xl font-semibold">{{ $receipt->receipt_number }}</div>
-                    <div class="text-sm text-gray-500">Issued {{ optional($receipt->issued_at)->format('Y-m-d H:i') }}</div>
+            <style>
+                .brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: 0.3px; color: #0b1220; font-size: 20px; }
+                .brand img { height: 22px; }
+                .heading { font-size: 34px; font-weight: 700; margin: 32px 0 30px; }
+                .pair { display: flex; justify-content: space-between; align-items: flex-start; margin: 18px 0 30px; }
+                .left { text-align: left; }
+                .row-between { display: flex; justify-content: space-between; align-items: flex-start; margin: 18px 0 34px; }
+                .row-between .left, .row-between .right { display: flex; flex-direction: column; gap: 2px; }
+                .label { color: #6b7280; font-size: 13px; line-height: 1.35; }
+                .value { font-size: 16px; font-weight: 600; line-height: 1.35; }
+                .muted { color: #6b7280; font-size: 12px; line-height: 1.4; }
+                .card { background: #eeeeef; border-radius: 12px; padding: 26px; }
+                .item-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 18px; }
+                .item-row .stack { display: flex; flex-direction: column; justify-content: flex-start; flex: 1 1 auto; min-width: 0; }
+                .item-row .amount { align-self: flex-start; text-align: right; white-space: nowrap; font-size: 16px; font-weight: 700; line-height: 1.35; }
+                .align-value { padding-top: 18px; }
+                .sub { color: #6b7280; font-size: 11px; margin-top: 2px; }
+                .divider { height: 1px; background: #d1d5db; border: 0; margin: 22px 0; }
+            </style>
+
+            <div class="topbar">
+                <div class="brand">
+                    <img src="{{ asset('Snapay.png') }}" alt="Logo">
+                    <span>SNAPAY</span>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                <div class="space-y-1">
-                    <div class="text-gray-500 text-sm">Student Name</div>
-                    <div class="font-medium">{{ $receipt->student_full_name }}</div>
+            <div class="heading">Receipt</div>
+
+            <div class="pair">
+                <div class="left">
+                    <div class="value">{{ $clientName ?? 'Snap Learn' }}</div>
+                    <div class="muted">P.O Box 999, Nairobi</div>
+                    <div class="muted">Mombasa Road, Nairobi</div>
+                    <div class="muted">email@support.com</div>
                 </div>
-                <div class="space-y-1">
-                    <div class="text-gray-500 text-sm">Student Email</div>
-                    <div class="font-medium">{{ optional($receipt->payment)->student_email ?? '-' }}</div>
-                </div>
-                <div class="space-y-1">
-                    <div class="text-gray-500 text-sm">Course</div>
-                    <div class="font-medium">{{ $receipt->course_name ?? '-' }}</div>
-                </div>
-                <div class="space-y-1">
-                    <div class="text-gray-500 text-sm">Amount Paid</div>
-                    <div class="font-semibold text-lg">KES {{ number_format($receipt->amount, 2) }}</div>
+                <div class="right">
+                    <div class="label">Purchase Date</div>
+                    <div class="value">{{ optional($receipt->issued_at)->format('j F Y') }}</div>
                 </div>
             </div>
 
-            <div class="border-t pt-6 grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                <div class="space-y-1">
-                    <div class="text-gray-500 text-sm">Payment Service</div>
-                    <div class="font-medium">{{ strtoupper(optional($receipt->payment)->payment_method ?? 'N/A') }}</div>
+            <div class="row-between">
+                <div class="left">
+                    <div class="label">Invoice No</div>
+                    <div class="value">{{ optional($receipt->payment)->reference ?? '-' }}</div>
                 </div>
-                <div class="space-y-1">
-                    <div class="text-gray-500 text-sm">Phone/Card</div>
-                    @php
-                        $phone = $receipt->payer_phone;
-                        $masked = $phone ? (strlen($phone) > 4 ? str_repeat('*', max(strlen($phone)-4, 0)) . substr($phone, -4) : $phone) : '-';
-                    @endphp
-                    <div class="font-medium">{{ $masked }}</div>
-                </div>
-                <div class="space-y-1">
-                    <div class="text-gray-500 text-sm">Payer</div>
-                    <div class="font-medium">{{ $receipt->payer_name }}{{ $receipt->payer_phone ? ' ('.$receipt->payer_phone.')' : '' }}</div>
-                </div>
-                <div class="space-y-1">
-                    <div class="text-gray-500 text-sm">Reference</div>
-                    <div class="font-medium">{{ optional($receipt->payment)->reference ?? '-' }}</div>
+                <div class="right">
+                    <div class="label">Transaction code</div>
+                    <div class="value">{{ $receipt->receipt_number }}</div>
                 </div>
             </div>
 
-            <div class="mb-8">
-                <div class="text-gray-600 text-sm">This is an electronically generated receipt for a successful transaction. No signature is required.</div>
+            <div class="card">
+                @php
+                    $total = (float)($receipt->amount ?? 0);
+                    $tax = 0.00;
+                    $itemAmount = $total;
+                    $phone = $receipt->payer_phone;
+                    $masked = $phone ? (strlen($phone) > 4 ? str_repeat('*', max(strlen($phone)-4, 0)) . substr($phone, -4) : $phone) : '-';
+                @endphp
+                <div class="item-row">
+                    <div class="stack">
+                        <div class="label">Items</div>
+                        <div class="value">{{ $receipt->course_name ?? 'Course' }}</div>
+                        <div class="sub">1 course</div>
+                    </div>
+                    <div class="amount align-value">Ksh {{ number_format($itemAmount, 2) }}</div>
+                </div>
+
+                <div style="height:30px"></div>
+
+                <div class="item-row">
+                    <div class="stack">
+                        <div class="label">Total tax</div>
+                        <div class="sub">VAT (16%)</div>
+                    </div>
+                    <div class="amount">Ksh {{ number_format($tax, 2) }}</div>
+                </div>
+
+                <div style="height:30px"></div>
+
+                <div class="item-row">
+                    <div class="stack">
+                        <div class="label">Payment method</div>
+                        <div class="value">{{ strtoupper(optional($receipt->payment)->payment_method ?? 'N/A') }}</div>
+                        <div class="value">{{ $masked ? '**** '.substr($masked, -4) : '' }}</div>
+                    </div>
+                </div>
+
+                <hr class="divider">
+
+                <div class="item-row">
+                    <div class="stack">
+                        <div class="label">Total</div>
+                    </div>
+                    <div class="amount">Ksh {{ number_format($total, 2) }}</div>
+                </div>
             </div>
 
-            <div class="flex items-center justify-between">
+            <div class="mt-8 text-gray-600 text-sm">Your purchase is subject to our <u>Terms & Conditions</u>.</div>
+
+            <div class="flex items-center justify-between mt-8">
                 <a href="{{ route('admin.receipts.index') }}" class="px-4 py-2 border rounded text-gray-700 hover:bg-gray-50">Back to Receipts</a>
                 <div class="space-x-2">
                     <a href="{{ route('admin.receipts.pdf', $receipt) }}" class="inline-flex items-center px-4 py-2 bg-primary text-white rounded hover:opacity-90">Download PDF</a>

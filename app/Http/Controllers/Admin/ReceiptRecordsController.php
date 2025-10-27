@@ -39,18 +39,25 @@ class ReceiptRecordsController extends Controller
 
     public function show(Receipt $receipt)
     {
-        $receipt->load('payment');
+        $receipt->load(['payment.clientApp']);
+        $clientName = optional(optional($receipt->payment)->clientApp)->name;
         return view('admin.receipts.show', [
             'receipt' => $receipt,
+            'clientName' => $clientName,
         ]);
     }
 
     public function pdf(Receipt $receipt)
     {
-        $receipt->load('payment');
+        $receipt->load(['payment.clientApp']);
+        $clientName = optional(optional($receipt->payment)->clientApp)->name;
         $pdf = Pdf::loadView('admin.receipts.pdf', [
             'receipt' => $receipt,
-        ])->setPaper('a4');
+            'clientName' => $clientName,
+        ])->setPaper('a4')->setOptions([
+            'defaultFont' => 'Quicksand',
+            'isRemoteEnabled' => true,
+        ]);
         return $pdf->download('receipt-'.$receipt->receipt_number.'.pdf');
     }
 }

@@ -7,84 +7,170 @@
     <title>Receipt {{ $receipt->receipt_number }}</title>
     <style>
         @page { margin: 24mm 18mm; }
-        body { font-family: DejaVu Sans, Arial, Helvetica, sans-serif; color: #111827; }
+        /* Embed Quicksand from public_path */
+        @font-face {
+            font-family: 'Quicksand';
+            font-style: normal;
+            font-weight: 400;
+            src: url('{{ public_path('fonts/Quicksand-Regular.ttf') }}') format('truetype');
+        }
+        @font-face {
+            font-family: 'Quicksand';
+            font-style: normal;
+            font-weight: 600;
+            src: url('{{ public_path('fonts/Quicksand-SemiBold.ttf') }}') format('truetype');
+        }
+        @font-face {
+            font-family: 'Quicksand';
+            font-style: normal;
+            font-weight: 700;
+            src: url('{{ public_path('fonts/Quicksand-Bold.ttf') }}') format('truetype');
+        }
+        body { font-family: 'Quicksand', DejaVu Sans, Arial, Helvetica, sans-serif; color: #111827; }
         .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
         .brand { font-size: 22px; font-weight: 700; letter-spacing: 0.04em; }
         .subtitle { color: #6b7280; font-size: 12px; }
         .box { border: 1px solid #e5e7eb; border-radius: 6px; padding: 16px; margin-bottom: 14px; }
         .row { display: flex; flex-wrap: wrap; gap: 16px; }
         .col { flex: 1 1 45%; }
-        .label { color: #6b7280; font-size: 11px; margin-bottom: 4px; }
-        .value { font-size: 13px; font-weight: 600; }
-        .amount { font-size: 16px; font-weight: 700; }
-        .muted { color: #6b7280; font-size: 11px; }
+        .label { color: #6b7280; font-size: 13px; line-height: 1.35; }
+        .value { font-size: 16px; font-weight: 600; line-height: 1.35; }
+        .amount { font-size: 16px; font-weight: 700; text-align: right; line-height: 1.35; }
+        .muted { color: #6b7280; font-size: 12px; line-height: 1.4; }
         .right { text-align: right; }
         .title { font-size: 18px; font-weight: 700; margin: 0; }
         .hr { height: 1px; background: #e5e7eb; border: 0; margin: 16px 0; }
         .footer { margin-top: 18px; }
+        /* Snapay layout additions */
+        .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; }
+        .brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: 0.3px; color: #0b1220; font-size: 20px; font-family: inherit; }
+        .brand img { height: 22px; }
+        .brand span { display: inline-block; }
+        .brand-name { font-size: 18px; font-weight: 700; letter-spacing: 0.02em; }
+        .heading { font-size: 34px; font-weight: 700; margin: 32px 0 30px; }
+        .pair { display: flex; justify-content: space-between; align-items: flex-start; margin: 18px 0 30px; }
+        .left { text-align: left; }
+        .row-between { display: flex; justify-content: space-between; align-items: flex-start; margin: 18px 0 34px; }
+        .row-between .left, .row-between .right { display: flex; flex-direction: column; gap: 2px; }
+        .card { background: #eeeeef; border-radius: 12px; padding: 26px; }
+        /* table-based two-column rows for DomPDF reliability */
+        .twocol { width: 100%; border-collapse: collapse; }
+        .twocol td { vertical-align: top; padding: 0; }
+        .amount-cell { text-align: right; white-space: nowrap; }
+        .align-value { padding-top: 18px; }
+        .item-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 18px; }
+        .item-row .label,
+        .item-row .value,
+        .item-row .sub { margin: 0; }
+        .item-row .stack { display: flex; flex-direction: column; justify-content: flex-start; flex: 1 1 auto; min-width: 0; }
+        .item-row .amount { align-self: flex-start; text-align: right; white-space: nowrap; }
+        .sub { color: #6b7280; font-size: 11px; margin-top: 2px; }
+        .divider { height: 1px; background: #d1d5db; border: 0; margin: 22px 0; }
+        .total-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 600; gap: 12px; }
+        /* normalize strong/b to available Quicksand weight */
+        strong, b { font-weight: 700; font-family: inherit; }
+        html, body, * { font-family: 'Quicksand', DejaVu Sans, Arial, Helvetica, sans-serif !important; }
     </style>
 </head>
 <body>
-    <div class="header">
-        <div>
-            <div class="brand">OPEN UNIVERSITY OF KENYA</div>
-            <div class="subtitle">Official Payment Receipt</div>
+    <?php
+        $logoPath = public_path('Snapay.png');
+        $logoData = file_exists($logoPath) ? base64_encode(file_get_contents($logoPath)) : null;
+    ?>
+    <div class="topbar">
+        <div class="brand">
+            <img src="{{ $logoData ? ('data:image/png;base64,'.$logoData) : public_path('Snapay.png') }}" alt="Logo">
+            <span>SNAPAY</span>
+        </div>
+    </div>
+
+    <div class="heading">Receipt</div>
+
+    <div class="pair">
+        <div class="left">
+            <div class="value font-size-4xl">{{ $clientName ?? 'Snap Learn' }}</div>
+            <div class="muted">P.O Box 999, Nairobi</div>
+            <div class="muted">Mombasa Road, Nairobi</div>
+            <div class="muted">email@support.com</div>
         </div>
         <div class="right">
-            <div class="subtitle">Receipt #</div>
-            <div class="title">{{ $receipt->receipt_number }}</div>
-            <div class="subtitle">Issued {{ optional($receipt->issued_at)->format('Y-m-d H:i') }}</div>
+            <div class="label">Purchase Date</div>
+            <div class="value">{{ optional($receipt->issued_at)->format('j F Y') }}</div>
         </div>
     </div>
 
-    <div class="box">
-        <div class="row">
-            <div class="col">
-                <div class="label">Student Name</div>
-                <div class="value">{{ $receipt->student_full_name }}</div>
-            </div>
-            <div class="col">
-                <div class="label">Student Email</div>
-                <div class="value">{{ optional($receipt->payment)->student_email ?? '-' }}</div>
-            </div>
-            <div class="col">
-                <div class="label">Course</div>
-                <div class="value">{{ $receipt->course_name ?? '-' }}</div>
-            </div>
-            <div class="col">
-                <div class="label">Amount Paid</div>
-                <div class="amount">KES {{ number_format($receipt->amount, 2) }}</div>
-            </div>
-        </div>
-    </div>
-
-    <div class="box">
-        <div class="row">
-            <div class="col">
-                <div class="label">Payment Service</div>
-                <div class="value">{{ strtoupper(optional($receipt->payment)->payment_method ?? 'N/A') }}</div>
-            </div>
-            <div class="col">
-                <div class="label">Phone/Card</div>
-                <?php
-                    $phone = $receipt->payer_phone;
-                    $masked = $phone ? (strlen($phone) > 4 ? str_repeat('*', max(strlen($phone)-4, 0)) . substr($phone, -4) : $phone) : '-';
-                ?>
-                <div class="value">{{ $masked }}</div>
-            </div>
-            <div class="col">
-                <div class="label">Payer</div>
-                <div class="value">{{ $receipt->payer_name }}{{ $receipt->payer_phone ? ' ('.$receipt->payer_phone.')' : '' }}</div>
-            </div>
-            <div class="col">
-                <div class="label">Reference</div>
+    <table class="twocol" style="margin: 14px 0 28px;">
+        <tr>
+            <td>
+                <div class="label">Invoice No</div>
                 <div class="value">{{ optional($receipt->payment)->reference ?? '-' }}</div>
+            </td>
+            <td class="amount-cell">
+                <div class="label">Transaction code</div>
+                <div class="value">{{ $receipt->receipt_number }}</div>
+            </td>
+        </tr>
+    </table>
+
+    <div class="card">
+        <?php
+            $total = (float)($receipt->amount ?? 0);
+            $tax = 0.00; // Hardcoded VAT for now
+            $itemAmount = $total; // Show full amount as fetched from DB
+            $phone = $receipt->payer_phone;
+            $masked = $phone ? (strlen($phone) > 4 ? str_repeat('*', max(strlen($phone)-4, 0)) . substr($phone, -4) : $phone) : '-';
+        ?>
+        <table class="twocol">
+            <tr>
+                <td><div class="label">Items</div></td>
+                <td class="amount-cell"></td>
+            </tr>
+            <tr>
+                <td><div class="value">{{ $receipt->course_name ?? 'Course' }}</div></td>
+                <td class="amount-cell amount">Ksh {{ number_format($itemAmount, 2) }}</td>
+            </tr>
+            <tr>
+                <td><div class="sub">1 course</div></td>
+                <td class="amount-cell"></td>
+            </tr>
+        </table>
+
+        <div style="height:20px"></div>
+
+        <table class="twocol" style="margin-top:20px;">
+            <tr>
+                <td>
+                    <div class="label">Total tax</div>
+                    <div class="sub">VAT (16%)</div>
+                </td>
+                <td class="amount-cell amount">Ksh {{ number_format($tax, 2) }}</td>
+            </tr>
+        </table>
+
+        <div style="height:30px"></div>
+
+        <div class="item-row">
+            <div class="stack">
+                <div class="label">Payment method</div>
+                <div class="value">{{ strtoupper(optional($receipt->payment)->payment_method ?? 'N/A') }}</div>
+                <div class="value">{{ $masked ? '**** '.substr($masked, -4) : '' }}</div>
             </div>
         </div>
+
+        <hr class="divider">
+
+        <table class="twocol">
+            <tr>
+                <td>
+                    <div class="label">Total</div>
+                </td>
+                <td class="amount-cell amount">Ksh {{ number_format($total, 2) }}</td>
+            </tr>
+        </table>
     </div>
 
     <div class="footer">
-        <div class="muted">This is an electronically generated receipt for a successful transaction. No signature is required.</div>
+        <div class="muted">Your purchase is subject to our <u>Terms & Conditions</u>.</div>
     </div>
 </body>
 </html>
