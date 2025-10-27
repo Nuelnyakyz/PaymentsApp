@@ -1,4 +1,5 @@
 import './bootstrap';
+import './payments.js';
 
 import Alpine from 'alpinejs';
 

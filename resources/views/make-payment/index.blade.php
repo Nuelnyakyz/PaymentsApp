@@ -308,29 +308,28 @@
         </div>
     </div>
 
-    <script src="{{ asset('js/payments.js') }}"></script>
     <script>
-    console.log('Inline script loaded');
-    console.log('triggerPaymentSubmit available?', typeof window.triggerPaymentSubmit);
-    
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('DOM loaded, triggerPaymentSubmit available?', typeof window.triggerPaymentSubmit);
+        console.log('Inline script loaded');
+        console.log('triggerPaymentSubmit available?', typeof window.triggerPaymentSubmit);
         
-        const btnProceed = document.querySelector('.btn-proceed');
-        console.log('Button found?', btnProceed);
-        
-        if (btnProceed) {
-            btnProceed.addEventListener('click', function() {
-                console.log('Button clicked!');
-                if (typeof window.triggerPaymentSubmit === 'function') {
-                    console.log('Calling triggerPaymentSubmit');
-                    window.triggerPaymentSubmit();
-                } else {
-                    console.error('triggerPaymentSubmit is not a function:', typeof window.triggerPaymentSubmit);
-                }
-            });
-        }
-    });
-</script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, triggerPaymentSubmit available?', typeof window.triggerPaymentSubmit);
+            
+            const btnProceed = document.querySelector('.btn-proceed');
+            console.log('Button found?', btnProceed);
+            
+            if (btnProceed) {
+                btnProceed.addEventListener('click', function() {
+                    console.log('Button clicked!');
+                    if (typeof window.triggerPaymentSubmit === 'function') {
+                        console.log('Calling triggerPaymentSubmit');
+                        window.triggerPaymentSubmit();
+                    } else {
+                        console.error('triggerPaymentSubmit is not a function:', typeof window.triggerPaymentSubmit);
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>
