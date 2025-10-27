@@ -55,7 +55,7 @@ class ReceiptRecordsController extends Controller
             'receipt' => $receipt,
             'clientName' => $clientName,
         ])->setPaper('a4')->setOptions([
-            'defaultFont' => 'Quicksand',
+            'defaultFont' => 'sans-serif',
             'isRemoteEnabled' => true,
         ]);
         return $pdf->download('receipt-'.$receipt->receipt_number.'.pdf');

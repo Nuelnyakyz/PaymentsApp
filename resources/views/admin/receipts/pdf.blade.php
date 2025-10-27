@@ -7,26 +7,9 @@
     <title>Receipt {{ $receipt->receipt_number }}</title>
     <style>
         @page { margin: 24mm 18mm; }
-        /* Embed Quicksand from public_path */
-        @font-face {
-            font-family: 'Quicksand';
-            font-style: normal;
-            font-weight: 400;
-            src: url('{{ public_path('fonts/Quicksand-Regular.ttf') }}') format('truetype');
-        }
-        @font-face {
-            font-family: 'Quicksand';
-            font-style: normal;
-            font-weight: 600;
-            src: url('{{ public_path('fonts/Quicksand-SemiBold.ttf') }}') format('truetype');
-        }
-        @font-face {
-            font-family: 'Quicksand';
-            font-style: normal;
-            font-weight: 700;
-            src: url('{{ public_path('fonts/Quicksand-Bold.ttf') }}') format('truetype');
-        }
-        body { font-family: 'Quicksand', DejaVu Sans, Arial, Helvetica, sans-serif; color: #111827; }
+        /* Use DomPDF-bundled font for reliability */
+        body { font-family: 'DejaVu Sans', Arial, Helvetica, sans-serif; color: #111827; }
+        html, body, * { font-family: 'DejaVu Sans', Arial, Helvetica, sans-serif !important; }
         .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
         .brand { font-size: 22px; font-weight: 700; letter-spacing: 0.04em; }
         .subtitle { color: #6b7280; font-size: 12px; }
