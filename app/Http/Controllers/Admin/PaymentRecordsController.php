@@ -5,15 +5,23 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Transaction;
+use App\Models\Payment;
 
-class TransactionRecordsController extends Controller
+class PaymentRecordsController extends Controller
 {
     public function index(Request $request)
     {
         $query = Transaction::query()->with(['payment']);
 
-        if ($request->filled('status')) {
-            $query->where('status', $request->string('status'));
+        if ($request->has('status')) {
+            $status = (string) $request->input('status');
+            if ($status !== '') {
+                $query->where('status', $status);
+            }
+            // else: empty string means "All Status" - no status where clause
+        } else {
+            // No status param provided - default view shows successful payments
+            $query->where('status', 'success');
         }
         if ($request->filled('from')) {
             $query->whereDate('created_at', '>=', $request->date('from'));
@@ -27,6 +35,14 @@ class TransactionRecordsController extends Controller
         if ($request->filled('max')) {
             $query->where('amount', '<=', (float) $request->input('max'));
         }
+        if ($request->filled('method')) {
+            $method = (string) $request->input('method');
+            if ($method !== '') {
+                $query->whereHas('payment', function ($q) use ($method) {
+                    $q->where('payment_method', $method);
+                });
+            }
+        }
         if ($request->filled('q')) {
             $q = $request->string('q');
             $query->where(function ($sub) use ($q) {
@@ -39,8 +55,17 @@ class TransactionRecordsController extends Controller
 
         $transactions = $query->latest('created_at')->paginate(20)->withQueryString();
 
-        return view('admin.transactions.index', [
+        // Distinct payment methods for filter dropdown
+        $methods = Payment::query()
+            ->whereNotNull('payment_method')
+            ->distinct()
+            ->orderBy('payment_method')
+            ->pluck('payment_method');
+
+        return view('admin.payments.index', [
             'transactions' => $transactions,
+            'defaultStatus' => $request->has('status') ? $request->input('status') : 'success',
+            'methods' => $methods,
         ]);
     }
 }

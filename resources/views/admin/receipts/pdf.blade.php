@@ -8,7 +8,7 @@
     <style>
         @page { margin: 24mm 18mm; }
         /* Use DomPDF-bundled font for reliability */
-        body { font-family: 'DejaVu Sans', Arial, Helvetica, sans-serif; color: #111827; }
+        body { font-family: 'DejaVu Sans', Arial, Helvetica, sans-serif; color: #111827; font-size: 15px; }
         html, body, * { font-family: 'DejaVu Sans', Arial, Helvetica, sans-serif !important; }
         .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
         .brand { font-size: 22px; font-weight: 700; letter-spacing: 0.04em; }
@@ -16,9 +16,9 @@
         .box { border: 1px solid #e5e7eb; border-radius: 6px; padding: 16px; margin-bottom: 14px; }
         .row { display: flex; flex-wrap: wrap; gap: 16px; }
         .col { flex: 1 1 45%; }
-        .label { color: #6b7280; font-size: 13px; line-height: 1.35; }
-        .value { font-size: 16px; font-weight: 600; line-height: 1.35; }
-        .amount { font-size: 16px; font-weight: 700; text-align: right; line-height: 1.35; }
+        .label { color: #6b7280; font-size: 13.5px; line-height: 1.35; }
+        .value { font-size: 17px; font-weight: 650; line-height: 1.35; }
+        .amount { font-size: 17px; font-weight: 750; text-align: right; line-height: 1.35; }
         .muted { color: #6b7280; font-size: 12px; line-height: 1.4; }
         .right { text-align: right; }
         .title { font-size: 18px; font-weight: 700; margin: 0; }
@@ -30,7 +30,7 @@
         .brand img { height: 22px; }
         .brand span { display: inline-block; }
         .brand-name { font-size: 18px; font-weight: 700; letter-spacing: 0.02em; }
-        .heading { font-size: 34px; font-weight: 700; margin: 32px 0 30px; }
+        .heading { font-size: 36px; font-weight: 800; margin: 32px 0 30px; }
         .pair { display: flex; justify-content: space-between; align-items: flex-start; margin: 18px 0 30px; }
         .left { text-align: left; }
         .row-between { display: flex; justify-content: space-between; align-items: flex-start; margin: 18px 0 34px; }

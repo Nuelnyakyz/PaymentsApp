@@ -1,6 +1,6 @@
 <?php
 return [
-    'admin_dashboard' => 'Admin Dashboard',
+    'admin_dashboard' => 'Dashboard',
     'payments' => 'Payments',
     'transactions' => 'Transactions',
     'receipts' => 'Receipts',

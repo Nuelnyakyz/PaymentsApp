@@ -10,38 +10,48 @@
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+        
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         <style>
-            /* Use Quicksand across the app UI */
-            body, .font-sans { font-family: 'Quicksand', ui-rounded, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; }
+            [x-cloak] { display: none !important; }
             @media (max-width: 640px) {
                 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
                 .no-scrollbar::-webkit-scrollbar { display: none; }
             }
         </style>
+        @stack('head')
     </head>
     <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100">
-            @include('layouts.navigation')
+        <div x-data class="min-h-screen bg-gray-100">
+            <div class="flex">
+                @include('layouts.sidebar')
 
-            <!-- Page Heading -->
-            @isset($header)
-                <header class="bg-white shadow">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                        {{ $header }}
-                    </div>
-                </header>
-            @endisset
+                <div class="flex-1 min-w-0">
+                    @include('layouts.navigation')
 
-            <!-- Page Content -->
-            <main>
-                {{ $slot }}
-            </main>
+                    @isset($header)
+                        <header class="bg-white shadow">
+                            <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 text-center text-secondary">
+                                {{ $header }}
+                            </div>
+                        </header>
+                    @endisset
+
+                    <main class="p-4 sm:p-6 lg:p-8">
+                        {{ $slot }}
+                    </main>
+                </div>
+            </div>
+
+            <!-- Mobile sidebar overlay -->
+            <div x-cloak x-show="$store.ui.mobileSidebar" x-transition.opacity class="fixed inset-0 bg-black/40 z-40 lg:hidden" @click="$store.ui.mobileSidebar = false"></div>
+
+            <!-- Mobile sidebar drawer -->
+            <aside x-cloak x-show="$store.ui.mobileSidebar" x-transition:enter="transition transform ease-out duration-200" x-transition:enter-start="-translate-x-full" x-transition:enter-end="translate-x-0" x-transition:leave="transition transform ease-in duration-150" x-transition:leave-start="translate-x-0" x-transition:leave-end="-translate-x-full" class="fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 lg:hidden overflow-y-auto">
+                @include('layouts.sidebar-mobile')
+            </aside>
         </div>
     </body>
 </html>

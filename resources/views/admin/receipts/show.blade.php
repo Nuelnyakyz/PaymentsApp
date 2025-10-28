@@ -3,7 +3,19 @@
         <h2 class="font-semibold text-xl text-primary leading-tight">Receipt</h2>
     </x-slot>
 
-    <div class="py-8 max-w-3xl mx-auto sm:px-6 lg:px-8">
+    @push('head')
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+        <style>
+            .receipt-page, .receipt-page * { font-family: 'Quicksand', ui-rounded, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important; }
+            .receipt-page { font-size: 1.02rem; }
+            .receipt-page .value { font-weight: 700; }
+            .receipt-page .heading { font-size: 36px; font-weight: 800; }
+        </style>
+    @endpush
+
+    <div class="receipt-page py-8 max-w-3xl mx-auto sm:px-6 lg:px-8">
         <div class="bg-white shadow rounded p-8">
             <style>
                 .brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: 0.3px; color: #0b1220; font-size: 20px; }

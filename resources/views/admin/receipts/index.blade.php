@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-primary leading-tight">Receipts</h2>
+        <h2 class="font-semibold text-xl text-primary leading-tight text-secondary">Receipts</h2>
     </x-slot>
 
     <div class="py-8 max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -17,29 +17,29 @@
 
     <div class="bg-white shadow rounded">
         <div class="p-6 overflow-x-auto">
-        <table class="min-w-full text-sm">
+        <table class="min-w-[1400px] w-full text-sm border-separate border-spacing-x-8 border-spacing-y-1">
             <thead>
-                <tr class="text-left text-primary border-b">
-                    <th class="py-2 pr-4">Receipt #</th>
-                    <th class="py-2 pr-4">Student</th>
-                    <th class="py-2 pr-4">Payer</th>
-                    <th class="py-2 pr-4">Amount</th>
-                    <th class="py-2 pr-4">Course</th>
-                    <th class="py-2 pr-4">Issued At</th>
+                <tr class="text-left text-primary bg-gray-50">
+                    <th class="py-2 pr-9 font-semibold min-w-[10rem]">Receipt #</th>
+                    <th class="py-2 pr-9 font-semibold min-w-[12rem]">Student</th>
+                    <th class="py-2 pr-9 font-semibold min-w-[12rem]">Payer</th>
+                    <th class="py-2 pr-9 font-semibold min-w-[6rem]">Amount</th>
+                    <th class="py-2 pr-9 font-semibold min-w-[12rem]">Course</th>
+                    <th class="py-2 pr-9 font-semibold min-w-[10rem]">Issued At</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody class="divide-y divide-gray-100">
                 @forelse ($receipts as $r)
-                    <tr class="border-b">
-                        <td class="py-2 pr-4"><a href="{{ route('admin.receipts.show', $r) }}" class="text-blue-600 hover:underline">{{ $r->receipt_number }}</a></td>
-                        <td class="py-2 pr-4">{{ $r->student_full_name }}</td>
-                        <td class="py-2 pr-4">{{ $r->payer_name }} ({{ $r->payer_phone }})</td>
-                        <td class="py-2 pr-4">{{ number_format($r->amount, 2) }}</td>
-                        <td class="py-2 pr-4">{{ $r->course_name ?? '-' }}</td>
-                        <td class="py-2 pr-4">{{ optional($r->issued_at)->format('Y-m-d H:i') }}</td>
+                    <tr class="whitespace-nowrap hover:bg-gray-50">
+                        <td class="py-2 pr-9 font-mono text-xs"><a href="{{ route('admin.receipts.show', $r) }}" class="text-blue-600 hover:underline">{{ $r->receipt_number }}</a></td>
+                        <td class="py-2 pr-9">{{ $r->student_full_name }}</td>
+                        <td class="py-2 pr-9">{{ $r->payer_name }} ({{ $r->payer_phone }})</td>
+                        <td class="py-2 pr-9 text-secondary font-bold">{{ number_format($r->amount, 2) }}</td>
+                        <td class="py-2 pr-9">{{ $r->course_name ?? '-' }}</td>
+                        <td class="py-2 pr-9 tabular-nums">{{ optional($r->issued_at)->format('Y-m-d H:i') }}</td>
                     </tr>
                 @empty
-                    <tr><td class="py-4 text-gray-500" colspan="6">No records.</td></tr>
+                    <tr><td class="py-4 pr-9 text-gray-500" colspan="6">No records.</td></tr>
                 @endforelse
             </tbody>
         </table>

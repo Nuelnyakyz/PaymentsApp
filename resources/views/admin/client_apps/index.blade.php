@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-primary leading-tight">Client Apps</h2>
+        <h2 class="font-semibold text-xl text-primary leading-tight text-secondary">Client Apps</h2>
     </x-slot>
 
     <div class="py-10 max-w-3xl mx-auto px-4 sm:px-8 lg:px-12">
