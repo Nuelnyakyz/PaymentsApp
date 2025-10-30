@@ -4,6 +4,7 @@ namespace App\Services\Payments;
 
 use App\Models\Payment;
 use App\Models\Transaction;
+use App\Services\GatewayConfigRepository;
 use App\Services\Reports\ReceiptService;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -18,30 +19,44 @@ class MpesaService
     private $shortcode;
     private $passkey;
     private $callbackUrl;
+    private $resultUrl;
+    private $timeoutUrl;
+    private $initiatorName;
+    private $initiatorPassword;
+    private $securityCredential;
+    private $environment;
 
-    public function __construct()
+    public function __construct(GatewayConfigRepository $configRepository, ?string $environment = null)
     {
-        $this->baseUrl = config('mpesa.base_url');
-        $this->consumerKey = config('mpesa.consumer_key');
-        $this->consumerSecret = config('mpesa.consumer_secret');
-        $this->shortcode = config('mpesa.shortcode');
-        $this->passkey = config('mpesa.passkey');
-        $this->callbackUrl = config('mpesa.callback_url');
+        $config = $configRepository->mpesa($environment);
+
+        $this->environment = $config['environment'];
+        $this->baseUrl = rtrim($config['api_base_url'], '/');
+        $this->consumerKey = $config['consumer_key'];
+        $this->consumerSecret = $config['consumer_secret'];
+        $this->shortcode = $config['shortcode'];
+        $this->passkey = $config['passkey'];
+        $this->callbackUrl = $config['callback_url'];
+        $this->resultUrl = $config['result_url'] ?? null;
+        $this->timeoutUrl = $config['timeout_url'] ?? null;
+        $this->initiatorName = $config['initiator_name'] ?? null;
+        $this->initiatorPassword = $config['initiator_password'] ?? null;
+        $this->securityCredential = $config['security_credential'] ?? null;
         $this->assertConfig();
     }
 
     private function assertConfig(): void
     {
         $missing = [];
-        if (empty($this->baseUrl)) $missing[] = 'MPESA_API_BASE_URL';
-        if (empty($this->consumerKey)) $missing[] = 'MPESA_CONSUMER_KEY';
-        if (empty($this->consumerSecret)) $missing[] = 'MPESA_CONSUMER_SECRET';
-        if (empty($this->shortcode)) $missing[] = 'MPESA_SHORTCODE';
-        if (empty($this->passkey)) $missing[] = 'MPESA_PASSKEY';
-        if (empty($this->callbackUrl)) $missing[] = 'MPESA_CALLBACK_URL';
+        if (empty($this->baseUrl)) $missing[] = 'api_base_url';
+        if (empty($this->consumerKey)) $missing[] = 'consumer_key';
+        if (empty($this->consumerSecret)) $missing[] = 'consumer_secret';
+        if (empty($this->shortcode)) $missing[] = 'shortcode';
+        if (empty($this->passkey)) $missing[] = 'passkey';
+        if (empty($this->callbackUrl)) $missing[] = 'callback_url';
         if (!empty($missing)) {
             Log::error('Mpesa configuration missing required keys', [ 'missing' => $missing ]);
-            throw new \RuntimeException('Missing required M-Pesa configuration: ' . implode(', ', $missing));
+            throw new \RuntimeException('Missing required M-Pesa configuration fields: ' . implode(', ', $missing));
         }
     }
     private function generateAccessToken()

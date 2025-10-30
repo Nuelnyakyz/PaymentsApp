@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\GatewayConfigRepository;
 use App\Services\Payments\MpesaService;
 use App\Models\Payment;
 use App\Models\Transaction;
@@ -14,6 +15,10 @@ use App\Models\ClientApp;
 
 class MakePaymentController extends Controller
 {
+    public function __construct(private readonly GatewayConfigRepository $gatewayConfig)
+    {
+    }
+
     public function initiate(Request $request)
     {
         $validated = $request->validate([
@@ -157,7 +162,7 @@ class MakePaymentController extends Controller
     private function getPaymentService($method)
     {
         return match ($method) {
-            'mpesa' => new MpesaService(),
+            'mpesa' => new MpesaService($this->gatewayConfig),
             // 'airtel' => new AirtelService(),
             // 'card' => new CardService(),
             // 'ecitizen' => new EcitizenService(),

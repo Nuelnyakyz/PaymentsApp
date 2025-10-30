@@ -124,7 +124,6 @@
                 <a href="{{ route('admin.receipts.index') }}" class="px-4 py-2 border rounded text-gray-700 hover:bg-gray-50">Back to Receipts</a>
                 <div class="space-x-2">
                     <a href="{{ route('admin.receipts.pdf', $receipt) }}" class="inline-flex items-center px-4 py-2 bg-primary text-white rounded hover:opacity-90">Download PDF</a>
-                   
                 </div>
             </div>
         </div>

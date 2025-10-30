@@ -4,10 +4,15 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\WebhookLog;
+use App\Services\GatewayConfigRepository;
 use App\Services\Payments\MpesaService;
 
 class WebhookController extends Controller
 {
+    public function __construct(private readonly GatewayConfigRepository $gatewayConfig)
+    {
+    }
+
     public function mpesa(Request $request)
     {
         // 1️⃣ Log raw callback payload
@@ -17,7 +22,7 @@ class WebhookController extends Controller
         ]);
 
         // 2️⃣ Forward to the MpesaService for processing
-        $mpesaService = new MpesaService();
+        $mpesaService = new MpesaService($this->gatewayConfig);
         $mpesaService->handleCallback($request->all());
 
         // 3️⃣ Best-effort: clear any UI prefill left in session (callbacks usually won't carry the user's session cookie)
