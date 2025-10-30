@@ -31,6 +31,8 @@ class MakePaymentController extends Controller
             'student_full_name' => 'required|string',
             'student_email' => 'nullable|email',
             'course_name' => 'nullable|string',
+            'course_id' => 'nullable|string',
+            'user_id' => 'nullable|string',
             'payer_name' => 'nullable|string',
             'client_app_id' => 'nullable|exists:client_apps,id',
         ]);
@@ -57,6 +59,8 @@ class MakePaymentController extends Controller
             'payer_name' => $validated['payer_name'] ?? $validated['student_full_name'],
             'payer_phone' => $validated['payer_phone'] ?? $validated['phone'],
             'course_name' => $validated['course_name'] ?? null,
+            'course_id' => $validated['course_id'] ?? $prefill['course_id'] ?? null,
+            'user_id' => $validated['user_id'] ?? $prefill['user_id'] ?? null,
             'amount' => $validated['amount'],
             'status' => 'pending',
             'payment_method' => $method,
@@ -111,8 +115,8 @@ class MakePaymentController extends Controller
             'status' => (string)$payment->status,
             'amount' => (float)$payment->amount,
             'client_app_id' => $client?->id ? (string)$client->id : null,
-            'course_id' => $prefill['course_id'] ?? null,
-            'user_id' => $prefill['user_id'] ?? null,
+            'course_id' => $payment->course_id ?? ($prefill['course_id'] ?? null),
+            'user_id' => $payment->user_id ?? ($prefill['user_id'] ?? null),
             'ts' => time(),
         ];
 

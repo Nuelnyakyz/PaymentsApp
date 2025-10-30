@@ -15,7 +15,8 @@ class Payment extends Model
         'reference',
         'student_full_name', 'student_email',
         'payer_name', 'payer_phone',
-        'course_name', 'amount', 'status', 'payment_method', 'paid_at'
+        'course_name', 'course_id', 'user_id',
+        'amount', 'status', 'payment_method', 'paid_at'
     ];
 
     protected $casts = [

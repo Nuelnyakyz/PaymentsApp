@@ -8,7 +8,7 @@
             <div class="text-gray-600">Manage gateway credentials per environment.</div>
             <form method="get" action="{{ route('admin.services.index') }}" class="flex items-center space-x-2">
                 <label for="env" class="text-sm text-gray-600">Environment</label>
-                <select id="env" name="env" class="border rounded pl-2 pr-3 py-1 w-40" onchange="this.form.submit()">
+                <select id="env" name="env" class="border rounded pl-2 pr-3 py-1 w-30" onchange="this.form.submit()">
                     <option value="sandbox" {{ ($environment ?? 'sandbox') === 'sandbox' ? 'selected' : '' }}>Sandbox</option>
                     <option value="live" {{ ($environment ?? 'sandbox') === 'live' ? 'selected' : '' }}>Live</option>
                 </select>

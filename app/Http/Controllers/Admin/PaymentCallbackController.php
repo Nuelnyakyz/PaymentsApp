@@ -24,8 +24,8 @@ class PaymentCallbackController extends Controller
             'status' => (string)$payment->status,
             'amount' => (float)$payment->amount,
             'client_app_id' => $client?->id ? (string)$client->id : null,
-            'course_id' => null,
-            'user_id' => null,
+            'course_id' => $payment->course_id,
+            'user_id' => $payment->user_id,
             'ts' => time(),
         ];
 
