@@ -19,7 +19,7 @@
                 <img src="{{ asset('Snapay.png') }}" alt="Snapay Logo">
                 <span class="text-primary">SNAPAY</span>
             </div>
-            <a href="{{ url('/') }}" class="checkout-cancel">Cancel</a>
+            <a href="javascript:void(0)" class="checkout-cancel" onclick="window.history.back()">Cancel</a>
         </div>
     </div>
 
