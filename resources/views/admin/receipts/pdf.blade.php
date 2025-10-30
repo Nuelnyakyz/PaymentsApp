@@ -79,6 +79,7 @@
         <div class="right">
             <div class="label">Purchase Date</div>
             <div class="value">{{ optional($receipt->issued_at)->format('j F Y') }}</div>
+            <div class="muted">{{ optional($receipt->issued_at)->format('g:i A') }}</div>
         </div>
     </div>
 

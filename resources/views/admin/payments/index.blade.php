@@ -44,8 +44,6 @@
                     <th class="py-2 pr-9 font-semibold min-w-[3rem]">Status</th>
                     <th class="py-2 pr-9 font-semibold min-w-[8rem]">Created</th>
                     <th class="py-2 pr-9 font-semibold min-w-[5rem]">Txn ID</th>
-                    <th class="py-2 pr-9 font-semibold min-w-[10rem]">Merchant Req</th>
-                    <th class="py-2 pr-9 font-semibold min-w-[10rem]">Checkout Req</th>
                     <th class="py-2 pr-9 font-semibold min-w-[3rem]"></th>
                 </tr>
             </thead>
@@ -67,8 +65,6 @@
                         </td>
                         <td class="py-2 pr-9 tabular-nums">{{ optional($p->created_at ?? $t->created_at)->format('Y-m-d H:i') }}</td>
                         <td class="py-2 pr-9 font-mono text-xs">{{ $t->transaction_id ?? '-' }}</td>
-                        <td class="py-2 pr-9 font-mono text-xs">{{ $t->merchant_request_id ?? '-' }}</td>
-                        <td class="py-2 pr-9 font-mono text-xs">{{ $t->checkout_request_id ?? '-' }}</td>
                         <td class="py-2 pr-9 text-right">
                             @php($status = strtolower($p->status ?? $t->status))
                             <form method="POST" action="{{ route('admin.payments.resend', $p) }}" onsubmit="return confirm('Resend callback to client app?');">

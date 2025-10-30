@@ -137,6 +137,7 @@
                         <th class="py-2 pr-9 font-semibold min-w-[10rem]">Reference</th>
                         <th class="py-2 pr-9 font-semibold min-w-[12rem]">Student</th>
                         <th class="py-2 pr-9 font-semibold min-w-[12rem]">Payer</th>
+                        <th class="py-2 pr-9 font-semibold min-w-[12rem]">Phone</th>
                         <th class="py-2 pr-9 font-semibold min-w-[6rem]">Method</th>
                         <th class="py-2 pr-9 font-semibold min-w-[6rem]">Amount</th>
                         <th class="py-2 pr-9 font-semibold min-w-[6rem]">Status</th>
@@ -149,6 +150,7 @@
                             <td class="py-2 pr-9">{{ $payment->reference }}</td>
                             <td class="py-2 pr-9">{{ $payment->student_full_name }}</td>
                             <td class="py-2 pr-9">{{ $payment->payer_name }}</td>
+                            <td class="py-2 pr-9">{{ $payment->payer_phone }}</td>
                             <td class="py-2 pr-9 uppercase">{{ $payment->payment_method }}</td>
                             <td class="py-2 pr-9 text-secondary font-bold">{{ number_format($payment->amount, 2) }}</td>
                             <td class="py-2 pr-9">
