@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\PaymentRecordsController as AdminPaymentRecordsController;
 use App\Http\Controllers\Admin\ReceiptRecordsController as AdminReceiptRecordsController;
 use App\Http\Controllers\Admin\PaymentCallbackController as AdminPaymentCallbackController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\ClientAppController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -38,6 +39,12 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::patch('/client-apps/{clientApp}', [ClientAppController::class, 'update'])->name('client-apps.update');
     Route::post('/client-apps/{clientApp}/regenerate', [ClientAppController::class, 'regenerate'])->name('client-apps.regenerate');
     Route::delete('/client-apps/{clientApp}', [ClientAppController::class, 'destroy'])->name('client-apps.destroy');
+
+    // User management
+    Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
+    Route::post('/users', [AdminUserController::class, 'store'])->name('users.store');
+    Route::patch('/users/{user}', [AdminUserController::class, 'update'])->name('users.update');
+    Route::delete('/users/{user}', [AdminUserController::class, 'destroy'])->name('users.destroy');
 });
 
 Route::middleware('auth')->group(function () {
