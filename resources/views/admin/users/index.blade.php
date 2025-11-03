@@ -19,8 +19,11 @@
         @endif
 
         <div class="bg-white shadow rounded p-6">
-            <h3 class="text-lg font-semibold mb-4">Invite a User</h3>
-            <form method="POST" action="{{ route('admin.users.store') }}" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="flex items-center justify-between gap-4">
+                <h3 class="text-lg font-semibold">Invite a User</h3>
+                <button type="button" id="toggle-create-user-button" onclick="toggleCreateUserForm()" aria-expanded="false" class="inline-flex items-center px-4 py-2 bg-primary text-white rounded hover:opacity-90">Create User</button>
+            </div>
+            <form id="create-user-form" method="POST" action="{{ route('admin.users.store') }}" class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 hidden">
                 @csrf
                 <div>
                     <label class="block text-sm text-gray-600 mb-1">Name</label>
@@ -153,6 +156,24 @@
     </div>
 
     <script>
+        function toggleCreateUserForm() {
+            const form = document.getElementById('create-user-form');
+            const button = document.getElementById('toggle-create-user-button');
+            if (!form || !button) return;
+
+            const isHidden = form.classList.contains('hidden');
+
+            if (isHidden) {
+                form.classList.remove('hidden');
+                button.setAttribute('aria-expanded', 'true');
+                button.textContent = 'Hide form';
+            } else {
+                form.classList.add('hidden');
+                button.setAttribute('aria-expanded', 'false');
+                button.textContent = 'Create User';
+            }
+        }
+
         function openModal(id) {
             const el = document.getElementById(id);
             if (!el) return;
