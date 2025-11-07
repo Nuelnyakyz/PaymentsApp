@@ -6,8 +6,10 @@ use App\Models\Payment;
 use App\Models\Transaction;
 use App\Services\GatewayConfigRepository;
 use App\Services\Reports\ReceiptService;
+use App\Mail\PaymentReceiptMail;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 
 
@@ -183,7 +185,19 @@ class MpesaService
 
             // Generate receipt
             $receiptService = new ReceiptService();
-            $receiptService->generate($payment, $mpesaReceipt, $amount);
+            $receipt = $receiptService->generate($payment, $mpesaReceipt, $amount);
+
+            // Email receipt to student if email present
+            try {
+                if (!empty($payment->student_email)) {
+                    Mail::to($payment->student_email)->send(new PaymentReceiptMail($payment, $receipt));
+                }
+            } catch (\Throwable $e) {
+                Log::error('Failed to send receipt email', [
+                    'payment_id' => $payment->id,
+                    'error' => $e->getMessage(),
+                ]);
+            }
 
             Log::info("Payment successful and receipt generated for {$mpesaReceipt}");
         } else {

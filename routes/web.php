@@ -33,6 +33,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('/services/mpesa', [\App\Http\Controllers\Admin\ServicesController::class, 'updateMpesa'])->name('services.mpesa.update');
     Route::post('/services/airtel', [\App\Http\Controllers\Admin\ServicesController::class, 'updateAirtel'])->name('services.airtel.update');
     Route::post('/services/visa', [\App\Http\Controllers\Admin\ServicesController::class, 'updateVisa'])->name('services.visa.update');
+    // SMTP settings
+    Route::get('/smtp', [\App\Http\Controllers\Admin\SmtpSettingsController::class, 'index'])->name('smtp.index');
+    Route::post('/smtp', [\App\Http\Controllers\Admin\SmtpSettingsController::class, 'update'])->name('smtp.update');
     // Services (Gateway settings)
     Route::get('/client-apps', [ClientAppController::class, 'index'])->name('client-apps.index');
     Route::post('/client-apps', [ClientAppController::class, 'store'])->name('client-apps.store');
