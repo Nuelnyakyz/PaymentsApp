@@ -14,9 +14,9 @@
         .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; }
         
         /* Header */
-        .header { background-color: #037b90; padding: 30px 20px; text-align: center; }
-        .header img { height: 50px; margin: 0 auto; }
-        .header-title { color: #ffffff; font-size: 24px; font-weight: bold; margin-top: 10px; }
+        .header { background-color: #037b90; padding: 40px 20px; text-align: center; }
+        .header img { height: 50px; display: inline-block; vertical-align: middle; }
+        .header-title { color: #ffffff; font-size: 24px; font-weight: bold; display: inline-block; vertical-align: middle; margin-left: 10px; }
         
         /* Content */
         .content { padding: 30px 20px; }
@@ -52,9 +52,9 @@
     <div class="container">
         <!-- Header with OUK Primary Color -->
         <div class="header">
-            <div style="display: flex; align-items: center; justify-content: center; gap: 10px;">
-                <img src="{{ $message->embed(public_path('Snapay.png')) }}" alt="Snapay" style="height: 40px; margin: 0;">
-                <span class="header-title" style="margin: 0;">Snapay</span>
+            <div style="text-align: center;">
+                <img src="{{ $message->embed(public_path('Snapay.png')) }}" alt="Snapay" style="height: 40px; display: inline-block; vertical-align: middle; margin-right: 5px;">
+                <span class="header-title" style="display: inline-block; vertical-align: middle; margin: 0;">Snapay</span>
             </div>
         </div>
 
