@@ -37,13 +37,12 @@ class PaymentReceiptMail extends Mailable
 
         $filename = 'receipt-'.($this->receipt->receipt_number ?? $this->payment->reference).'.pdf';
 
-        // Minimal inline HTML body; no new Blade template
-        $body = '<p>Hi '.e($this->payment->student_full_name ?? 'Student').',</p>'
-              . '<p>Your payment receipt is attached as a PDF.</p>'
-              . '<p>Thank you.</p>';
-
         return $this->subject($subject)
-            ->html($body)
+            ->view('emails.payment_receipt', [
+                'receipt' => $this->receipt,
+                'payment' => $this->payment,
+                'clientName' => $clientName,
+            ])
             ->attachData($pdf->output(), $filename, [
                 'mime' => 'application/pdf',
             ]);
