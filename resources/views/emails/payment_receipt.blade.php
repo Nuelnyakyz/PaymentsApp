@@ -24,7 +24,7 @@
         .date-info { text-align: center; color: #6b7280; font-size: 14px; margin-bottom: 30px; }
         
         /* Card */
-        .card { background-color: #f3f4f6; border-radius: 12px; padding: 24px; margin-bottom: 24px; }
+        .card { background-color: #f3f4f6; border-radius: 12px; padding: 24px; margin-bottom: 24px; border-left: 5px solid #ff7f50; }
         .item-table td { padding: 8px 0; vertical-align: top; }
         .item-name { font-weight: 600; font-size: 16px; color: #1f2937; }
         .item-sub { font-size: 13px; color: #6b7280; margin-top: 4px; }
@@ -44,7 +44,7 @@
         .details-value { color: #1f2937; font-size: 15px; font-weight: 500; }
         
         /* Footer */
-        .footer { text-align: center; padding: 20px; color: #9ca3af; font-size: 12px; border-top: 1px solid #e5e7eb; margin-top: 20px; }
+        .footer { text-align: center; padding: 20px; color: #9ca3af; font-size: 12px; border-top: 2px solid #037b90; margin-top: 20px; }
         .footer a { color: #037b90; text-decoration: none; }
     </style>
 </head>
@@ -52,20 +52,38 @@
     <div class="container">
         <!-- Header with OUK Primary Color -->
         <div class="header">
-            <!-- Using Snapay logo but styled like OUK header -->
-            <img src="{{ $message->embed(public_path('Snapay.png')) }}" alt="Snapay">
+            <div style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+                <img src="{{ $message->embed(public_path('Snapay.png')) }}" alt="Snapay" style="height: 40px; margin: 0;">
+                <span class="header-title" style="margin: 0;">Snapay</span>
+            </div>
         </div>
 
         <div class="content">
-            <div class="greeting">Your Receipt</div>
+            <div class="greeting">Hi, <span style="color: #ff7f50;">{{ $payment->student_full_name ?? 'Student' }}</span></div>
+            <div style="text-align: center; color: #6b7280; font-size: 16px; margin-bottom: 20px;">
+                Your receipt for {{ $clientName ?? 'Snap Learn' }}
+            </div>
             
             <div class="date-info">
-                {{ optional($receipt->issued_at)->format('F j, Y') }}<br>
-                Order ID: {{ $receipt->receipt_number }}
+                {{ optional($receipt->issued_at)->format('F j, Y g:i A') }}
             </div>
 
             <!-- Grey Card (Spotify Style) -->
             <div class="card">
+                <!-- Invoice & Transaction Code at the top of the card -->
+                <table class="details-table" style="margin-top: 0; margin-bottom: 20px; border-bottom: 1px solid #e5e7eb; padding-bottom: 15px;">
+                    <tr>
+                        <td style="width: 50%; padding-right: 10px;">
+                            <div class="details-label">Invoice No</div>
+                            <div class="details-value">{{ optional($receipt->payment)->reference ?? '-' }}</div>
+                        </td>
+                        <td style="width: 50%; padding-left: 10px; text-align: right;">
+                            <div class="details-label">Transaction Code</div>
+                            <div class="details-value">{{ $receipt->receipt_number }}</div>
+                        </td>
+                    </tr>
+                </table>
+
                 <table class="item-table">
                     <tr>
                         <td>
@@ -116,26 +134,17 @@
                 </table>
             </div>
 
-            <!-- Details Below Card -->
-            <table class="details-table">
-                <tr>
-                    <td style="width: 50%; padding-right: 10px;">
-                        <div class="details-label">Invoice No</div>
-                        <div class="details-value">{{ optional($receipt->payment)->reference ?? '-' }}</div>
-                    </td>
-                    <td style="width: 50%; padding-left: 10px;">
-                        <div class="details-label">Transaction Code</div>
-                        <div class="details-value">{{ $receipt->receipt_number }}</div>
-                    </td>
-                </tr>
-            </table>
+            <!-- Thank You Message Below Card -->
+            <div style="text-align: center; margin-top: 20px; margin-bottom: 30px; color: #1f2937; font-size: 15px;">
+                <p>Thank you for your payment. We appreciate your business!</p>
+            </div>
 
             <div style="margin-top: 30px; text-align: center; color: #6b7280; font-size: 14px;">
                 <p>If you have any questions, contact us at <a href="mailto:support@snapay.co.ke">support@snapay.co.ke</a></p>
             </div>
         </div>
 
-        <div class="footer">
+        <div class="footer" style="border-top: 1px solid #037b90;">
             &copy; {{ date('Y') }} {{ $clientName ?? 'Snapay' }}. All rights reserved.<br>
             <a href="#">Terms</a> | <a href="#">Privacy</a>
         </div>

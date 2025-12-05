@@ -75,3 +75,21 @@ Route::get('/pay/complete/{payment}', [MakePaymentController::class, 'complete']
     ->name('pay.complete');
 
 require __DIR__.'/auth.php';
+
+// Temporary route for previewing the email template
+Route::get('/test-email', function () {
+    $payment = new \App\Models\Payment();
+    $payment->reference = 'INV-2023-001';
+    $payment->payment_method = 'mpesa';
+    $payment->student_full_name = 'John Doe';
+    
+    $receipt = new \App\Models\Receipt();
+    $receipt->receipt_number = 'RCT-12345678';
+    $receipt->issued_at = now();
+    $receipt->amount = 1.00;
+    $receipt->course_name = 'How to Develop Beautiful Landscape Photos';
+    $receipt->payer_phone = '254712345678';
+    $receipt->setRelation('payment', $payment);
+
+    return new \App\Mail\PaymentReceiptMail($payment, $receipt);
+});
