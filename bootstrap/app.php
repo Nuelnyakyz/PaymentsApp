@@ -21,6 +21,12 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => AdminMiddleware::class,
         ]);
+
+        // Exclude routes from CSRF protection
+        $middleware->validateCsrfTokens(except: [
+            'pay/prepare',
+            'pay/prepare/*',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
