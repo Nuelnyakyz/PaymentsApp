@@ -24,7 +24,7 @@
         .date-info { text-align: center; color: #6b7280; font-size: 14px; margin-bottom: 30px; }
         
         /* Card */
-        .card { background-color: #f3f4f6; border-radius: 12px; padding: 24px; margin-bottom: 24px; border-left: 5px solid #ff7f50; }
+        .card { background-color: #f3f4f6; border-radius: 0px; padding: 24px; margin-bottom: 24px; border-left: 3px solid #ff7f50; }
         .item-table td { padding: 8px 0; vertical-align: top; }
         .item-name { font-weight: 600; font-size: 16px; color: #1f2937; }
         .item-sub { font-size: 13px; color: #6b7280; margin-top: 4px; }
@@ -53,8 +53,7 @@
         <!-- Header with OUK Primary Color -->
         <div class="header">
             <div style="text-align: center;">
-                <img src="{{ $message->embed(public_path('Snapay.png')) }}" alt="Snapay" style="height: 40px; display: inline-block; vertical-align: middle; margin-right: 5px;">
-                <span class="header-title" style="display: inline-block; vertical-align: middle; margin: 0;">Snapay</span>
+                <img src="{{ $message->embed(public_path('ouk_logo.png')) }}" alt="Snapay" style="height: 80px; width: auto; display: inline-block; vertical-align: middle;">
             </div>
         </div>
 
