@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Cache;
 use App\Models\ClientApp;
 
 class PaymentSessionController extends Controller
@@ -24,11 +25,32 @@ class PaymentSessionController extends Controller
             'signature' => 'nullable|string',
         ]);
 
-        // Enforce timestamp freshness to prevent replay (default: 5 minutes)
+        // Enforce timestamp freshness to prevent replay (default: 1 hour)
         $now = time();
-        $maxSkew = 300; // seconds
+        $maxSkew = 3600; // 1 hour window to accommodate user delay/clock skew
+
         if (abs($now - (int)$data['ts']) > $maxSkew) {
+            if (!empty($data['return_url'])) {
+                return redirect()->away($data['return_url'] . (parse_url($data['return_url'], PHP_URL_QUERY) ? '&' : '?') . http_build_query([
+                    'error' => 'stale_request',
+                    'message' => 'The payment request has expired. Please try again.',
+                ]));
+            }
             abort(400, 'Stale request (timestamp too old or too far in future)');
+        }
+
+        // Check for Replay using Cache (Signature as Nonce)
+        if (!empty($data['signature'])) {
+            $cacheKey = "replay:{$data['signature']}";
+            if (Cache::has($cacheKey)) {
+                if (!empty($data['return_url'])) {
+                    return redirect()->away($data['return_url'] . (parse_url($data['return_url'], PHP_URL_QUERY) ? '&' : '?') . http_build_query([
+                        'error' => 'replay_detected',
+                        'message' => 'This payment request has already been processed.',
+                    ]));
+                }
+                abort(400, 'Replay detected');
+            }
         }
 
         // Validate client app and api_key
@@ -45,11 +67,13 @@ class PaymentSessionController extends Controller
             $baseString = http_build_query($payloadForSig, '', '&', PHP_QUERY_RFC3986);
             $expected = hash_hmac('sha256', $baseString, $client->api_secret);
             if (!hash_equals($expected, $data['signature'])) {
-                Log::warning('Invalid HMAC for pay.prepare', [
-                    'client_app_id' => $data['client_app_id'],
-                ]);
                 abort(403, 'Invalid signature');
             }
+        }
+
+        // Mark request as used in Cache to prevent replay
+        if (!empty($data['signature'])) {
+            Cache::put("replay:{$data['signature']}", true, $maxSkew);
         }
 
         // Store only the fields we need to prefill in the UI and later submit
