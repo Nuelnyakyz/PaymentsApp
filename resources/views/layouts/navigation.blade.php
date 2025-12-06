@@ -4,7 +4,7 @@
             <!-- Left: Brand only -->
             <a href="{{ (Auth::check() && Auth::user()->is_admin) ? route('admin.dashboard') : url('/') }}" class="shrink-0">
                 <div class="brand flex items-center gap-2 sm:gap-2.5 group">
-                    <img src="{{ asset('Snapay.png') }}" alt="Snapay Logo" class="h-6 w-6 sm:h-7 sm:w-7 object-contain drop-shadow shrink-0" />
+                    <img src="{{ asset('ouk_logo.png') }}" style="height: 60px; width: auto; display: inline-block; vertical-align: middle;" alt="Snapay Logo" class="h-6 w-6 sm:h-7 sm:w-7 object-contain drop-shadow shrink-0" />
                     <span class="text-primary text-base sm:text-lg font-semibold tracking-wide uppercase transition-colors duration-200 group-hover:text-secondary">Snapay</span>
                 </div>
             </a>

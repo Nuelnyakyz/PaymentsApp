@@ -25,8 +25,8 @@
         .hr { height: 1px; background: #e5e7eb; border: 0; margin: 16px 0; }
         .footer { margin-top: 18px; }
         /* Snapay layout additions */
-        .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; }
-        .brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: 0.3px; color: #0b1220; font-size: 20px; font-family: inherit; }
+        .topbar { display: flex; justify-content: center; align-items: center; margin-bottom: 28px; }
+        .brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: 0.3px; color: #0b1220; font-size: 20px; font-family: inherit; justify-content: center; }
         .brand img { height: 22px; }
         .brand span { display: inline-block; }
         .brand-name { font-size: 18px; font-weight: 700; letter-spacing: 0.02em; }
@@ -57,31 +57,32 @@
 </head>
 <body>
     <?php
-        $logoPath = public_path('Snapay.png');
+        $logoPath = public_path('ouk_logo.png');
         $logoData = file_exists($logoPath) ? base64_encode(file_get_contents($logoPath)) : null;
     ?>
-    <div class="topbar">
-        <div class="brand">
-            <img src="{{ $logoData ? ('data:image/png;base64,'.$logoData) : public_path('Snapay.png') }}" alt="Logo">
-            <span>SNAPAY</span>
+    <div class="topbar" style="text-align: center; margin-top:20px; margin-bottom:20px;">
+        <div class="brand" style="display: block;">
+            <img src="{{ $logoData ? ('data:image/png;base64,'.$logoData) : public_path('ouk_logo.png') }}" style="height: 100px; width: auto; display: inline-block; vertical-align: middle;" alt="Logo">
         </div>
     </div>
 
     <div class="heading">Receipt</div>
 
-    <div class="pair">
-        <div class="left">
-            <div class="value font-size-4xl">{{ $clientName ?? 'Snap Learn' }}</div>
-            <div class="muted">P.O Box 999, Nairobi</div>
-            <div class="muted">Mombasa Road, Nairobi</div>
-            <div class="muted">email@support.com</div>
-        </div>
-        <div class="right">
-            <div class="label">Purchase Date</div>
-            <div class="value">{{ optional($receipt->issued_at)->format('j F Y') }}</div>
-            <div class="muted">{{ optional($receipt->issued_at)->format('g:i A') }}</div>
-        </div>
-    </div>
+    <table width="100%" style="margin: 18px 0 30px;">
+        <tr>
+            <td valign="top" align="left" width="60%">
+                <div class="value font-size-4xl">{{ $clientName ?? 'Snap Learn' }}</div>
+                <div class="muted">P.O Box 999, Nairobi</div>
+                <div class="muted">Mombasa Road, Nairobi</div>
+                <div class="muted">email@support.com</div>
+            </td>
+            <td valign="top" align="right" width="40%">
+                <div class="label">Purchase Date</div>
+                <div class="value">{{ optional($receipt->issued_at)->format('j F Y') }}</div>
+                <div class="muted">{{ optional($receipt->issued_at)->format('g:i A') }}</div>
+            </td>
+        </tr>
+    </table>
 
     <table class="twocol" style="margin: 14px 0 28px;">
         <tr>

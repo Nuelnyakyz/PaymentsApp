@@ -16,7 +16,7 @@
     <div class="checkout-header">
         <div class="checkout-header__inner">
             <div class="brand">
-                <img src="{{ asset('Snapay.png') }}" alt="Snapay Logo">
+                <img src="{{ asset('ouk_logo.png') }}" style="height: 60px; width: auto; display: inline-block; vertical-align: middle;" alt="Snapay Logo">
                 <span class="text-primary">SNAPAY</span>
             </div>
             <a href="javascript:void(0)" class="checkout-cancel" onclick="window.history.back()">Cancel</a>

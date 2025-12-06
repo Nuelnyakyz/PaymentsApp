@@ -37,10 +37,10 @@
                 .divider { height: 1px; background: #d1d5db; border: 0; margin: 22px 0; }
             </style>
 
-            <div class="topbar">
+            <div class="topbar" style="display: flex; justify-content: center; margin-top:20px; margin-bottom:20px;">
                 <div class="brand">
-                    <img src="{{ asset('Snapay.png') }}" alt="Logo">
-                    <span>SNAPAY</span>
+                    <img src="{{ asset('ouk_logo.png') }}" style="height: 100px; width: auto; display: inline-block; vertical-align: middle;" alt="Logo">
+                    <!--<span>SNAPAY</span>-->
                 </div>
             </div>
 
